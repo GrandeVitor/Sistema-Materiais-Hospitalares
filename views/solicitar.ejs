@@ -16,7 +16,7 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
     <nav
@@ -24,7 +24,7 @@
       aria-label="Navegação principal"
     >
       <div class="container">
-        <a class="navbar-brand site-logo" href="index.html"
+        <a class="navbar-brand site-logo" href="index.ejs"
           ><i class="bi bi-heart-pulse me-2" aria-hidden="true"></i>3 de Maio</a
         ><button
           class="navbar-toggler"
@@ -40,18 +40,18 @@
         <div class="collapse navbar-collapse" id="menuPrincipal">
           <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
             <li class="nav-item">
-              <a class="nav-link" href="index.html">Início</a>
+              <a class="nav-link" href="index.ejs">Início</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="materiais.html">Materiais</a>
+              <a class="nav-link" href="materiais.ejs">Materiais</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="solicitacoes.html"
+              <a class="nav-link" href="solicitacoes.ejs"
                 >Minhas solicitações</a
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="admin.html">Área administrativa</a>
+              <a class="nav-link" href="admin.ejs">Área administrativa</a>
             </li>
           </ul>
         </div>
@@ -193,7 +193,7 @@
                 <div
                   class="col-12 d-flex flex-column flex-sm-row justify-content-end gap-2 pt-3"
                 >
-                  <a href="materiais.html" class="btn btn-outline-custom px-4"
+                  <a href="materiais.ejs" class="btn btn-outline-custom px-4"
                     >Voltar aos materiais</a
                   ><button type="submit" class="btn btn-primary-custom px-4">
                     <i class="bi bi-send me-2" aria-hidden="true"></i>Enviar
@@ -230,8 +230,8 @@
         <div class="toast-body">Solicitação enviada com sucesso!</div>
       </div>
     </div>
-    <script src="js/dados.js"></script>
-    <script src="js/solicitar.js"></script>
+    <script src="/js/dados.js"></script>
+    <script src="/js/solicitar.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
