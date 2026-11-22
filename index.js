@@ -1,4 +1,5 @@
-
+import conectar from './config/conexao.js';
+conectar();
 import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
