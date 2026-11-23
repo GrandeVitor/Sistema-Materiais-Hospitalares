@@ -1,16 +1,24 @@
-import conectar from './config/conexao.js';
-conectar();
+
 import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import conectar from './config/conexao.js';
+import solicitacaoRoutes from './routes/solicitacaoRoutes.js';
+import materialRoutes from './routes/materialRoutes.js';
+import usuarioRoutes from './routes/usuarioRoutes.js';
+import Material from './models/Material.js';
+import adminRoutes from './routes/adminRoutes.js';
 dotenv.config();
 
 const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Conexão com MongoDB
+conectar();
 
 // Configuração do EJS
 app.set('view engine', 'ejs');
@@ -22,25 +30,33 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Recebimento de formulários
 app.use(express.urlencoded({ extended: true }));
 
+// Registro das rotas
+app.use('/materiais', materialRoutes);
+app.use('/solicitacoes', solicitacaoRoutes);
+app.use('/usuarios', usuarioRoutes);
 // Rotas das páginas
 app.get('/', (req, res) => {
     res.render('index');
 });
 
-app.get('/admin', (req, res) => {
-    res.render('admin');
-});
+app.use('/admin', adminRoutes);
 
-app.get('/materiais', (req, res) => {
-    res.render('materiais');
-});
+app.get('/solicitar', async (req, res) => {
+    try {
+        const materiais = await Material.find({
+            quantidade: { $gt: 0 }
+        });
 
-app.get('/solicitacoes', (req, res) => {
-    res.render('solicitacoes');
-});
+        const materialSelecionado = req.query.material || '';
 
-app.get('/solicitar', (req, res) => {
-    res.render('solicitar');
+        res.render('solicitar', {
+            materiais,
+            materialSelecionado
+        });
+    } catch (erro) {
+        console.error('Erro ao buscar materiais:', erro);
+        res.status(500).send('Erro ao carregar o formulário.');
+    }
 });
 
 // Inicialização do servidor

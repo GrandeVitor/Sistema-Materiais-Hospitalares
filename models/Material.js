@@ -17,7 +17,7 @@ const materialSchema = new mongoose.Schema({
     },
     categoria: {
         type: String,
-        required: true
+        required: false
     },
     imagem: {
         type: String,
