@@ -8,8 +8,10 @@ import conectar from './config/conexao.js';
 import solicitacaoRoutes from './routes/solicitacaoRoutes.js';
 import materialRoutes from './routes/materialRoutes.js';
 import usuarioRoutes from './routes/usuarioRoutes.js';
+import doacaoRoutes from './routes/doacaoRoutes.js';
 import Material from './models/Material.js';
 import adminRoutes from './routes/adminRoutes.js';
+
 dotenv.config();
 
 const app = express();
@@ -34,6 +36,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/materiais', materialRoutes);
 app.use('/solicitacoes', solicitacaoRoutes);
 app.use('/usuarios', usuarioRoutes);
+app.use('/doacoes', doacaoRoutes);
+
 // Rotas das páginas
 app.get('/', (req, res) => {
     res.render('index');
