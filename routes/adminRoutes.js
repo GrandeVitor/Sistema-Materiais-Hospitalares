@@ -4,7 +4,7 @@ import express from 'express';
 import Solicitacao from '../models/Solicitacao.js';
 import Emprestimo from '../models/Emprestimo.js';
 import Material from '../models/Material.js';
-
+import Usuario from '../models/Usuario.js';
 const router = express.Router();
 
 // Exibir painel administrativo
@@ -14,6 +14,21 @@ router.get('/', async (req, res) => {
             status: 'Pendente'
         });
 
+        const buscaSolicitacao = req.query.buscaSolicitacao || '';
+
+const filtroSolicitacao = buscaSolicitacao
+    ? {
+        $or: [
+            { nomeUsuario: { $regex: buscaSolicitacao, $options: 'i' } },
+            { email: { $regex: buscaSolicitacao, $options: 'i' } },
+            { nomeMaterial: { $regex: buscaSolicitacao, $options: 'i' } }
+        ]
+    }
+    : {};
+
+const todasSolicitacoes = await Solicitacao.find(filtroSolicitacao).sort({
+    dataSolicitacao: -1
+});
         const solicitacoesComImagem = await Promise.all(
             solicitacoesPendentes.map(async (solicitacao) => {
                 const material = await Material.findOne({
@@ -36,6 +51,14 @@ router.get('/', async (req, res) => {
         });
 
         const totalMateriais = await Material.countDocuments();
+        
+        const buscaUsuario = req.query.buscaUsuario || '';
+
+const filtroUsuario = buscaUsuario
+    ? { nome: { $regex: buscaUsuario, $options: 'i' } }
+    : {};
+
+const usuarios = await Usuario.find(filtroUsuario).sort({ nome: 1 });
 
 const busca = req.query.busca || '';
 
@@ -46,9 +69,13 @@ const filtro = busca
 const materiais = await Material.find(filtro).sort({ nome: 1 });
         res.render('admin', {
             solicitacoesPendentes: solicitacoesComImagem,
+            todasSolicitacoes,
             emprestimosAtivos,
             materiais,
             busca,
+            usuarios,
+            buscaUsuario,
+            buscaSolicitacao,
             totalPendentes: solicitacoesPendentes.length,
             totalAtivos: emprestimosAtivos.length,
             totalMateriais
@@ -175,6 +202,162 @@ router.post('/devolver/:id', async (req, res) => {
     }
 });
 
+
+// Exibir formulário de edição de solicitação
+router.get('/solicitacoes/editar/:id', async (req, res) => {
+    try {
+        const solicitacao = await Solicitacao.findById(req.params.id);
+
+        if (!solicitacao) {
+            return res.status(404).send('Solicitação não encontrada.');
+        }
+
+        res.render('editarSolicitacao', { solicitacao });
+
+    } catch (erro) {
+        console.error('Erro ao buscar solicitação para edição:', erro);
+        res.status(500).send('Erro ao carregar formulário de edição.');
+    }
+});
+
+// Salvar alterações da solicitação
+router.post('/solicitacoes/editar/:id', async (req, res) => {
+    try {
+        const {
+            nomeUsuario,
+            telefone,
+            email,
+            rua,
+            numero,
+            bairro,
+            cidade,
+            complemento
+        } = req.body;
+
+        const solicitacao = await Solicitacao.findById(req.params.id);
+
+        if (!solicitacao) {
+            return res.status(404).send('Solicitação não encontrada.');
+        }
+
+        if (
+            !nomeUsuario?.trim() ||
+            !telefone?.trim() ||
+            !email?.trim() ||
+            !rua?.trim() ||
+            !bairro?.trim() ||
+            !cidade?.trim()
+        ) {
+            return res.status(400).send('Preencha todos os campos obrigatórios.');
+        }
+
+        solicitacao.nomeUsuario = nomeUsuario.trim();
+        solicitacao.telefone = telefone.trim();
+        solicitacao.email = email.trim();
+
+        solicitacao.endereco = {
+            rua: rua.trim(),
+            numero: numero?.trim() || '',
+            bairro: bairro.trim(),
+            cidade: cidade.trim(),
+            complemento: complemento?.trim() || ''
+        };
+
+        await solicitacao.save();
+
+        res.redirect('/admin');
+
+    } catch (erro) {
+        console.error('Erro ao editar solicitação:', erro);
+        res.status(500).send('Erro ao salvar alterações da solicitação.');
+    }
+});
+
+
+// Excluir solicitação
+router.post('/solicitacoes/excluir/:id', async (req, res) => {
+    try {
+        const solicitacao = await Solicitacao.findById(req.params.id);
+
+        if (!solicitacao) {
+            return res.status(404).send('Solicitação não encontrada.');
+        }
+
+        if (solicitacao.status === 'Aprovada') {
+            return res.status(400).send(
+                'Não é possível excluir uma solicitação aprovada, pois ela possui um histórico de empréstimo.'
+            );
+        }
+
+        await Solicitacao.findByIdAndDelete(req.params.id);
+
+        res.redirect('/admin');
+
+    } catch (erro) {
+        console.error('Erro ao excluir solicitação:', erro);
+        res.status(500).send('Erro ao excluir solicitação.');
+    }
+});
+
+// Exibir formulário de edição de usuário
+router.get('/usuarios/editar/:id', async (req, res) => {
+    try {
+        const usuario = await Usuario.findById(req.params.id);
+
+        if (!usuario) {
+            return res.status(404).send('Usuário não encontrado.');
+        }
+
+        res.render('editarUsuario', { usuario });
+
+    } catch (erro) {
+        console.error('Erro ao buscar usuário para edição:', erro);
+        res.status(500).send('Erro ao carregar formulário de edição.');
+    }
+});
+
+// Salvar alterações do usuário
+router.post('/usuarios/editar/:id', async (req, res) => {
+    try {
+        const { nome, senha, tipo } = req.body;
+
+        const usuario = await Usuario.findById(req.params.id);
+
+        if (!usuario) {
+            return res.status(404).send('Usuário não encontrado.');
+        }
+
+        if (!nome || !nome.trim()) {
+            return res.status(400).send('O nome é obrigatório.');
+        }
+
+        // Verificar se outro usuário já utiliza esse nome
+        const nomeExistente = await Usuario.findOne({
+            nome: nome.trim(),
+            _id: { $ne: usuario._id }
+        });
+
+        if (nomeExistente) {
+            return res.status(400).send('Este nome já está cadastrado.');
+        }
+
+        usuario.nome = nome.trim();
+        usuario.tipo = tipo;
+
+        // Só altera a senha se o campo não estiver vazio
+        if (senha && senha.trim()) {
+            usuario.senha = senha;
+        }
+
+        await usuario.save();
+
+        res.redirect('/admin');
+
+    } catch (erro) {
+        console.error('Erro ao editar usuário:', erro);
+        res.status(500).send('Erro ao salvar alterações do usuário.');
+    }
+});
 // Excluir material
 router.post('/excluir/:id', async (req, res) => {
     try {
@@ -189,6 +372,23 @@ router.post('/excluir/:id', async (req, res) => {
     } catch (erro) {
         console.error('Erro ao excluir material:', erro);
         res.status(500).send('Erro ao excluir material.');
+    }
+});
+
+// Excluir usuário
+router.post('/usuarios/excluir/:id', async (req, res) => {
+    try {
+        const usuario = await Usuario.findByIdAndDelete(req.params.id);
+
+        if (!usuario) {
+            return res.status(404).send('Usuário não encontrado.');
+        }
+
+        res.redirect('/admin');
+
+    } catch (erro) {
+        console.error('Erro ao excluir usuário:', erro);
+        res.status(500).send('Erro ao excluir usuário.');
     }
 });
 

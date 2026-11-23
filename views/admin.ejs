@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Painel administrativo para gerenciamento de materiais, solicitações e devoluções." />
+    <meta name="description" content="Painel administrativo para gerenciamento de materiais, solicitações, devoluções e usuários." />
     <title>Área administrativa | Comunidade 3 de Maio</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -48,7 +48,7 @@
                 <span class="section-kicker">Gestão</span>
                 <h1 class="fw-bold mt-1">Área administrativa</h1>
                 <p class="text-secondary mb-0">
-                    Gerencie materiais, solicitações e devoluções.
+                    Gerencie materiais, solicitações, devoluções e usuários.
                 </p>
             </div>
 
@@ -97,9 +97,14 @@
                 <div class="col-12 col-lg-3">
                     <div class="admin-sidebar d-grid gap-2">
 
-                        <button type="button" onclick="showTab('tab-emprestimo', this)" class="tab-btn <%= busca ? '' : 'active' %> rounded-3 p-3">
+                        <button type="button" onclick="showTab('tab-emprestimo', this)" class="tab-btn <%= (busca || buscaUsuario || buscaSolicitacao) ? '' : 'active' %> rounded-3 p-3">
                             <i class="bi bi-inbox me-2" aria-hidden="true"></i>
                             Solicitações
+                        </button>
+
+                        <button type="button" onclick="showTab('tab-solicitacoes', this)" class="tab-btn <%= buscaSolicitacao ? 'active' : '' %> rounded-3 p-3">
+                            <i class="bi bi-clipboard-list me-2" aria-hidden="true"></i>
+                            Gerenciar solicitações
                         </button>
 
                         <button type="button" onclick="showTab('tab-devolucao', this)" class="tab-btn rounded-3 p-3">
@@ -117,14 +122,19 @@
                             Gerenciar materiais
                         </button>
 
+                        <button type="button" onclick="showTab('tab-usuarios', this)" class="tab-btn <%= buscaUsuario ? 'active' : '' %> rounded-3 p-3">
+                            <i class="bi bi-people me-2" aria-hidden="true"></i>
+                            Gerenciar usuários
+                        </button>
+
                     </div>
                 </div>
 
                 <div class="col-12 col-lg-9">
                     <div class="content-card p-4 p-md-5">
 
-                        <!-- Solicitações -->
-                        <div id="tab-emprestimo" class="tab-content <%= busca ? '' : 'active' %>">
+                        <!-- Solicitações pendentes -->
+                        <div id="tab-emprestimo" class="tab-content <%= (busca || buscaUsuario || buscaSolicitacao) ? '' : 'active' %>">
                             <div class="content-title">
                                 <div>
                                     <h2 class="h3 fw-bold mb-1">Solicitações de empréstimo</h2>
@@ -195,6 +205,113 @@
                                 <% if (solicitacoesPendentes.length === 0) { %>
                                     <div class="empty-state p-4 text-center">
                                         Nenhuma solicitação pendente no momento.
+                                    </div>
+                                <% } %>
+
+                            </div>
+                        </div>
+
+                        <!-- Gerenciar todas as solicitações -->
+                        <div id="tab-solicitacoes" class="tab-content <%= buscaSolicitacao ? 'active' : '' %>">
+                            <div class="content-title mb-4">
+                                <div>
+                                    <h2 class="h3 fw-bold mb-1">Gerenciar solicitações</h2>
+                                    <p class="text-secondary mb-0">
+                                        Consulte todas as solicitações, incluindo pendentes, aprovadas e recusadas.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Pesquisa de solicitações -->
+                            <form action="/admin" method="GET" class="mb-4">
+                                <div class="input-group">
+                                    <input
+                                        type="text"
+                                        name="buscaSolicitacao"
+                                        class="form-control"
+                                        placeholder="Pesquisar por usuário, e-mail ou material..."
+                                        value="<%= buscaSolicitacao || '' %>"
+                                    >
+
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-search me-1"></i>
+                                        Pesquisar
+                                    </button>
+
+                                    <a href="/admin" class="btn btn-secondary">
+                                        Limpar
+                                    </a>
+                                </div>
+                            </form>
+
+                            <div class="d-grid gap-3">
+
+                                <% todasSolicitacoes.forEach(solicitacao => { %>
+                                    <div class="material-card">
+
+                                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                            <div>
+                                                <h3 class="mb-1"><%= solicitacao.nomeUsuario %></h3>
+
+                                                <p class="mb-2">
+                                                    <strong>Material:</strong>
+                                                    <%= solicitacao.nomeMaterial %>
+                                                </p>
+                                            </div>
+
+                                            <span class="status">
+                                                <%= solicitacao.status %>
+                                            </span>
+                                        </div>
+
+                                        <hr>
+
+                                        <p class="mb-1">
+                                            <i class="bi bi-telephone me-2"></i>
+                                            <%= solicitacao.telefone %>
+                                        </p>
+
+                                        <p class="mb-1">
+                                            <i class="bi bi-envelope me-2"></i>
+                                            <%= solicitacao.email %>
+                                        </p>
+
+                                        <p class="mb-3">
+    <i class="bi bi-calendar me-2"></i>
+    <strong>Data da solicitação:</strong>
+    <%= new Date(solicitacao.dataSolicitacao).toLocaleDateString('pt-BR') %>
+</p>
+
+
+<div class="d-flex gap-2 flex-wrap">
+    <a
+        href="/admin/solicitacoes/editar/<%= solicitacao._id %>"
+        class="btn btn-primary"
+    >
+        <i class="bi bi-pencil-square me-1"></i>
+        Editar
+    </a>
+
+    <% if (solicitacao.status !== 'Aprovada') { %>
+        <form
+            action="/admin/solicitacoes/excluir/<%= solicitacao._id %>"
+            method="POST"
+            onsubmit="return confirm('Tem certeza que deseja excluir esta solicitação?');"
+        >
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash me-1"></i>
+                Excluir
+            </button>
+        </form>
+    <% } %>
+</div>
+
+                                    </div>
+                                <% }) %>
+
+                                <% if (todasSolicitacoes.length === 0) { %>
+                                    <div class="empty-state p-4 text-center">
+                                        Nenhuma solicitação encontrada.
                                     </div>
                                 <% } %>
 
@@ -396,6 +513,83 @@
                                 <% if (materiais.length === 0) { %>
                                     <div class="empty-state p-4 text-center">
                                         Nenhum material encontrado.
+                                    </div>
+                                <% } %>
+
+                            </div>
+                        </div>
+
+                        <!-- Gerenciar usuários -->
+                        <div id="tab-usuarios" class="tab-content <%= buscaUsuario ? 'active' : '' %>">
+                            <div class="content-title mb-4">
+                                <div>
+                                    <h2 class="h3 fw-bold mb-1">Gerenciar usuários</h2>
+                                    <p class="text-secondary mb-0">
+                                        Consulte, pesquise e gerencie os usuários cadastrados.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Pesquisa de usuários -->
+                            <form action="/admin" method="GET" class="mb-4">
+                                <div class="input-group">
+                                    <input
+                                        type="text"
+                                        name="buscaUsuario"
+                                        class="form-control"
+                                        placeholder="Pesquisar usuário pelo nome..."
+                                        value="<%= buscaUsuario || '' %>"
+                                    >
+
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-search me-1"></i>
+                                        Pesquisar
+                                    </button>
+
+                                    <a href="/admin" class="btn btn-secondary">
+                                        Limpar
+                                    </a>
+                                </div>
+                            </form>
+
+                            <div class="d-grid gap-3">
+
+                                <% usuarios.forEach(usuario => { %>
+                                    <div class="material-card">
+                                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                            <div>
+                                                <h3 class="mb-1"><%= usuario.nome %></h3>
+
+                                                <p class="mb-0">
+                                                    <strong>Tipo:</strong>
+                                                    <%= usuario.tipo %>
+                                                </p>
+                                            </div>
+
+                                            <div class="d-flex gap-2">
+                                                <a href="/admin/usuarios/editar/<%= usuario._id %>" class="btn btn-primary">
+                                                    <i class="bi bi-pencil-square me-1"></i>
+                                                    Editar
+                                                </a>
+
+                                                <form
+                                                    action="/admin/usuarios/excluir/<%= usuario._id %>"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');"
+                                                >
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="bi bi-trash me-1"></i>
+                                                        Excluir
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }) %>
+
+                                <% if (usuarios.length === 0) { %>
+                                    <div class="empty-state p-4 text-center">
+                                        Nenhum usuário encontrado.
                                     </div>
                                 <% } %>
 
