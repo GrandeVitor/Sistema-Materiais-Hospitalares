@@ -1,5 +1,7 @@
+
 import express from 'express';
 import Material from '../models/Material.js';
+import upload from '../config/upload.js';
 
 const router = express.Router();
 
@@ -13,14 +15,17 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/cadastrar', async (req, res) => {
+// Cadastrar material com imagem
+router.post('/cadastrar', upload.single('imagem'), async (req, res) => {
     try {
         const novoMaterial = new Material({
             nome: req.body.nome,
             descricao: req.body.descricao,
             quantidade: req.body.quantidade,
             categoria: req.body.categoria,
-            imagem: req.body.imagem
+            imagem: req.file
+                ? `/imagens/${req.file.filename}`
+                : req.body.imagem || ''
         });
 
         await novoMaterial.save();
@@ -49,16 +54,26 @@ router.get('/editar/:id', async (req, res) => {
     }
 });
 
-// Atualizar material
-router.post('/editar/:id', async (req, res) => {
+// Atualizar material com possibilidade de trocar a imagem
+router.post('/editar/:id', upload.single('imagem'), async (req, res) => {
     try {
-        await Material.findByIdAndUpdate(req.params.id, {
-            nome: req.body.nome,
-            descricao: req.body.descricao,
-            quantidade: req.body.quantidade,
-            categoria: req.body.categoria,
-            imagem: req.body.imagem
-        });
+        const material = await Material.findById(req.params.id);
+
+        if (!material) {
+            return res.status(404).send('Material não encontrado.');
+        }
+
+        material.nome = req.body.nome;
+        material.descricao = req.body.descricao;
+        material.quantidade = req.body.quantidade;
+        material.categoria = req.body.categoria;
+
+        // Só substituir a imagem se uma nova for enviada
+        if (req.file) {
+            material.imagem = `/imagens/${req.file.filename}`;
+        }
+
+        await material.save();
 
         res.redirect('/materiais');
 
