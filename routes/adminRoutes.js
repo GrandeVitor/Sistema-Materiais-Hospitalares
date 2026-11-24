@@ -50,6 +50,34 @@ const todasSolicitacoes = await Solicitacao.find(filtroSolicitacao).sort({
             status: 'Em andamento'
         });
 
+        // Buscar todos os empréstimos
+const buscaEmprestimo = req.query.buscaEmprestimo || '';
+
+const filtroEmprestimo = buscaEmprestimo
+    ? {
+        $or: [
+            {
+                nomeUsuario: {
+                    $regex: buscaEmprestimo,
+                    $options: 'i'
+                }
+            },
+            {
+                nomeMaterial: {
+                    $regex: buscaEmprestimo,
+                    $options: 'i'
+                }
+            }
+        ]
+    }
+    : {};
+
+const todosEmprestimos = await Emprestimo.find(
+    filtroEmprestimo
+).sort({
+    dataEmprestimo: -1
+});
+
         const totalMateriais = await Material.countDocuments();
         
         const buscaUsuario = req.query.buscaUsuario || '';
@@ -71,6 +99,8 @@ const materiais = await Material.find(filtro).sort({ nome: 1 });
             solicitacoesPendentes: solicitacoesComImagem,
             todasSolicitacoes,
             emprestimosAtivos,
+            todosEmprestimos,
+            buscaEmprestimo,
             materiais,
             busca,
             usuarios,
@@ -389,6 +419,83 @@ router.post('/usuarios/excluir/:id', async (req, res) => {
     } catch (erro) {
         console.error('Erro ao excluir usuário:', erro);
         res.status(500).send('Erro ao excluir usuário.');
+    }
+});
+
+
+// Exibir formulário de edição de empréstimo
+router.get('/emprestimos/editar/:id', async (req, res) => {
+    try {
+        const emprestimo = await Emprestimo.findById(req.params.id);
+
+        if (!emprestimo) {
+            return res.status(404).send('Empréstimo não encontrado.');
+        }
+
+        res.render('editarEmprestimo', { emprestimo });
+
+    } catch (erro) {
+        console.error('Erro ao buscar empréstimo:', erro);
+        res.status(500).send('Erro ao carregar formulário de edição.');
+    }
+});
+
+// Salvar alterações do empréstimo
+router.post('/emprestimos/editar/:id', async (req, res) => {
+    try {
+        const { nomeUsuario, dataEmprestimo } = req.body;
+
+        const emprestimo = await Emprestimo.findById(req.params.id);
+
+        if (!emprestimo) {
+            return res.status(404).send('Empréstimo não encontrado.');
+        }
+
+        if (!nomeUsuario?.trim() || !dataEmprestimo) {
+            return res.status(400).send('Preencha todos os campos obrigatórios.');
+        }
+
+        const novaData = new Date(`${dataEmprestimo}T12:00:00`);
+
+        if (isNaN(novaData.getTime())) {
+            return res.status(400).send('Data do empréstimo inválida.');
+        }
+
+        emprestimo.nomeUsuario = nomeUsuario.trim();
+        emprestimo.dataEmprestimo = novaData;
+
+        await emprestimo.save();
+
+        res.redirect('/admin');
+
+    } catch (erro) {
+        console.error('Erro ao editar empréstimo:', erro);
+        res.status(500).send('Erro ao salvar alterações do empréstimo.');
+    }
+});
+
+// Excluir empréstimo devolvido
+router.post('/emprestimos/excluir/:id', async (req, res) => {
+    try {
+        const emprestimo = await Emprestimo.findById(req.params.id);
+
+        if (!emprestimo) {
+            return res.status(404).send('Empréstimo não encontrado.');
+        }
+
+        if (emprestimo.status !== 'Devolvido') {
+            return res.status(400).send(
+                'Não é possível excluir um empréstimo que ainda está em andamento.'
+            );
+        }
+
+        await Emprestimo.findByIdAndDelete(req.params.id);
+
+        res.redirect('/admin');
+
+    } catch (erro) {
+        console.error('Erro ao excluir empréstimo:', erro);
+        res.status(500).send('Erro ao excluir empréstimo.');
     }
 });
 

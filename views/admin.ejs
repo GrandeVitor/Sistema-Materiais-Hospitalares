@@ -1,247 +1,685 @@
 
+
 <!doctype html>
+
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <meta name="description" content="Painel administrativo para gerenciamento de materiais, solicitações, devoluções e usuários." />
+
     <title>Área administrativa | Comunidade 3 de Maio</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
     <link rel="stylesheet" href="/css/style.css" />
+
 </head>
 
 <body>
+
     <nav class="navbar navbar-expand-lg site-navbar sticky-top" aria-label="Navegação principal">
+
         <div class="container">
+
             <a class="navbar-brand site-logo" href="/">
+
                 <i class="bi bi-heart-pulse me-2" aria-hidden="true"></i>3 de Maio
+
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menu">
+
                 <span class="navbar-toggler-icon"></span>
+
             </button>
 
             <div class="collapse navbar-collapse" id="menuPrincipal">
+
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+
                     <li class="nav-item">
+
                         <a class="nav-link" href="/index">Início</a>
+
                     </li>
+
                     <li class="nav-item">
+
                         <a class="nav-link" href="/materiais">Materiais</a>
+
                     </li>
+
                     <li class="nav-item">
+
                         <a class="nav-link" href="/solicitacoes">Minhas solicitações</a>
+
                     </li>
+
                     <li class="nav-item">
+
                         <a class="nav-link active" aria-current="page" href="/admin">Área administrativa</a>
+
                     </li>
+
                 </ul>
+
             </div>
+
         </div>
+
     </nav>
 
     <main class="py-5">
+
         <div class="container">
+
             <div class="page-header mb-4">
+
                 <span class="section-kicker">Gestão</span>
+
                 <h1 class="fw-bold mt-1">Área administrativa</h1>
+
                 <p class="text-secondary mb-0">
+
                     Gerencie materiais, solicitações, devoluções e usuários.
+
                 </p>
+
             </div>
 
             <!-- Indicadores -->
+
             <div class="row g-3 mb-4">
+
                 <div class="col-12 col-sm-6 col-xl-4">
+
                     <div class="stat-card">
+
                         <div class="stat-icon">
+
                             <i class="bi bi-hourglass-split" aria-hidden="true"></i>
+
                         </div>
+
                         <div>
+
                             <span class="stat-label">Pendentes</span>
+
                             <strong id="totalPendentes"><%= totalPendentes %></strong>
+
                         </div>
+
                     </div>
+
                 </div>
 
                 <div class="col-12 col-sm-6 col-xl-4">
+
                     <div class="stat-card">
+
                         <div class="stat-icon">
+
                             <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+
                         </div>
+
                         <div>
+
                             <span class="stat-label">Em empréstimo</span>
+
                             <strong id="totalAtivos"><%= totalAtivos %></strong>
+
                         </div>
+
                     </div>
+
                 </div>
 
                 <div class="col-12 col-sm-6 col-xl-4">
+
                     <div class="stat-card">
+
                         <div class="stat-icon">
+
                             <i class="bi bi-box-seam" aria-hidden="true"></i>
+
                         </div>
+
                         <div>
+
                             <span class="stat-label">Materiais</span>
+
                             <strong id="totalMateriais"><%= totalMateriais %></strong>
+
                         </div>
+
                     </div>
+
                 </div>
+
             </div>
 
             <div class="row g-4">
 
                 <!-- Menu lateral -->
+
                 <div class="col-12 col-lg-3">
+
                     <div class="admin-sidebar d-grid gap-2">
 
-                        <button type="button" onclick="showTab('tab-emprestimo', this)" class="tab-btn <%= (busca || buscaUsuario || buscaSolicitacao) ? '' : 'active' %> rounded-3 p-3">
+                        <button type="button" onclick="showTab('tab-emprestimo', this)" class="tab-btn <%= (busca || buscaUsuario || buscaSolicitacao || buscaEmprestimo) ? '' : 'active' %> rounded-3 p-3">
+
                             <i class="bi bi-inbox me-2" aria-hidden="true"></i>
+
                             Solicitações
+
                         </button>
 
                         <button type="button" onclick="showTab('tab-solicitacoes', this)" class="tab-btn <%= buscaSolicitacao ? 'active' : '' %> rounded-3 p-3">
+
                             <i class="bi bi-clipboard-list me-2" aria-hidden="true"></i>
+
                             Gerenciar solicitações
+
                         </button>
 
                         <button type="button" onclick="showTab('tab-devolucao', this)" class="tab-btn rounded-3 p-3">
+
                             <i class="bi bi-arrow-return-left me-2" aria-hidden="true"></i>
+
                             Devoluções
+
+                        </button>
+
+                        <button type="button" onclick="showTab('tab-gerenciar-emprestimos', this)" class="tab-btn <%= buscaEmprestimo ? 'active' : '' %> rounded-3 p-3">
+                            <i class="bi bi-journal-text me-2" aria-hidden="true"></i>
+                            Gerenciar empréstimos
                         </button>
 
                         <button type="button" onclick="showTab('tab-cadastro', this)" class="tab-btn rounded-3 p-3">
+
                             <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
+
                             Cadastrar material
+
                         </button>
 
                         <button type="button" onclick="showTab('tab-materiais', this)" class="tab-btn <%= busca ? 'active' : '' %> rounded-3 p-3">
+
                             <i class="bi bi-pencil-square me-2" aria-hidden="true"></i>
+
                             Gerenciar materiais
+
                         </button>
 
                         <button type="button" onclick="showTab('tab-usuarios', this)" class="tab-btn <%= buscaUsuario ? 'active' : '' %> rounded-3 p-3">
+
                             <i class="bi bi-people me-2" aria-hidden="true"></i>
+
                             Gerenciar usuários
+
                         </button>
 
                         <a href="/doacoes" class="tab-btn rounded-3 p-3 text-decoration-none">
+
     <i class="bi bi-gift me-2" aria-hidden="true"></i>
+
     Gerenciar doações
+
 </a>
+
                     </div>
+
                 </div>
 
                 <div class="col-12 col-lg-9">
+
                     <div class="content-card p-4 p-md-5">
 
                         <!-- Solicitações pendentes -->
-                        <div id="tab-emprestimo" class="tab-content <%= (busca || buscaUsuario || buscaSolicitacao) ? '' : 'active' %>">
+
+                        <div id="tab-emprestimo" class="tab-content <%= (busca || buscaUsuario || buscaSolicitacao || buscaEmprestimo) ? '' : 'active' %>">
+
                             <div class="content-title">
+
                                 <div>
+
                                     <h2 class="h3 fw-bold mb-1">Solicitações de empréstimo</h2>
+
                                     <p class="text-secondary mb-0">
+
                                         Gerencie os pedidos feitos pelos usuários.
+
                                     </p>
+
                                 </div>
 
                                 <span class="section-kicker">
+
                                     <i class="bi bi-clock me-1" aria-hidden="true"></i>
+
                                     Pendentes
+
                                 </span>
+
                             </div>
 
                             <div id="listaSolicitacoesAdmin" class="d-grid gap-3 mt-4" aria-live="polite">
 
                                 <% solicitacoesPendentes.forEach(solicitacao => { %>
+
                                     <div class="material-card">
+
                                         <img
+
                                             src="<%= solicitacao.imagem %>"
+
                                             alt="<%= solicitacao.nomeMaterial %>"
+
                                             class="material-img-right"
+
                                         >
 
                                         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+
                                             <div>
+
                                                 <h3 class="mb-1"><%= solicitacao.nomeUsuario %></h3>
+
                                                 <p class="mb-2">
+
                                                     <strong>Material:</strong> <%= solicitacao.nomeMaterial %>
+
                                                 </p>
+
                                             </div>
 
                                             <span class="status pendente">
+
                                                 <%= solicitacao.status %>
+
                                             </span>
+
                                         </div>
 
                                         <hr>
 
                                         <p class="mb-1">
+
                                             <i class="bi bi-telephone me-2"></i>
+
                                             <%= solicitacao.telefone %>
+
                                         </p>
 
                                         <p class="mb-0">
+
                                             <i class="bi bi-envelope me-2"></i>
+
                                             <%= solicitacao.email %>
+
                                         </p>
 
                                         <div class="d-flex gap-2 mt-3">
+
                                             <form action="/admin/aprovar/<%= solicitacao._id %>" method="POST">
+
                                                 <button type="submit" class="btn btn-success">
+
                                                     <i class="bi bi-check-circle me-1"></i>
+
                                                     Aprovar
+
                                                 </button>
+
                                             </form>
 
                                             <form action="/admin/recusar/<%= solicitacao._id %>" method="POST">
+
                                                 <button type="submit" class="btn btn-danger">
+
                                                     <i class="bi bi-x-circle me-1"></i>
+
                                                     Recusar
+
                                                 </button>
+
                                             </form>
+
                                         </div>
+
                                     </div>
+
                                 <% }) %>
 
                                 <% if (solicitacoesPendentes.length === 0) { %>
+
                                     <div class="empty-state p-4 text-center">
+
                                         Nenhuma solicitação pendente no momento.
+
                                     </div>
+
                                 <% } %>
 
                             </div>
+
                         </div>
 
                         <!-- Gerenciar todas as solicitações -->
+
                         <div id="tab-solicitacoes" class="tab-content <%= buscaSolicitacao ? 'active' : '' %>">
+
+                            <div class="content-title mb-4">
+
+                                <div>
+
+                                    <h2 class="h3 fw-bold mb-1">Gerenciar solicitações</h2>
+
+                                    <p class="text-secondary mb-0">
+
+                                        Consulte todas as solicitações, incluindo pendentes, aprovadas e recusadas.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Pesquisa de solicitações -->
+
+                            <form action="/admin" method="GET" class="mb-4">
+
+                                <div class="input-group">
+
+                                    <input
+
+                                        type="text"
+
+                                        name="buscaSolicitacao"
+
+                                        class="form-control"
+
+                                        placeholder="Pesquisar por usuário, e-mail ou material..."
+
+                                        value="<%= buscaSolicitacao || '' %>"
+
+                                    >
+
+                                    <button type="submit" class="btn btn-primary">
+
+                                        <i class="bi bi-search me-1"></i>
+
+                                        Pesquisar
+
+                                    </button>
+
+                                    <a href="/admin" class="btn btn-secondary">
+
+                                        Limpar
+
+                                    </a>
+
+                                </div>
+
+                            </form>
+
+                            <div class="d-grid gap-3">
+
+                                <% todasSolicitacoes.forEach(solicitacao => { %>
+
+                                    <div class="material-card">
+
+                                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+
+                                            <div>
+
+                                                <h3 class="mb-1"><%= solicitacao.nomeUsuario %></h3>
+
+                                                <p class="mb-2">
+
+                                                    <strong>Material:</strong>
+
+                                                    <%= solicitacao.nomeMaterial %>
+
+                                                </p>
+
+                                            </div>
+
+                                            <span class="status">
+
+                                                <%= solicitacao.status %>
+
+                                            </span>
+
+                                        </div>
+
+                                        <hr>
+
+                                        <p class="mb-1">
+
+                                            <i class="bi bi-telephone me-2"></i>
+
+                                            <%= solicitacao.telefone %>
+
+                                        </p>
+
+                                        <p class="mb-1">
+
+                                            <i class="bi bi-envelope me-2"></i>
+
+                                            <%= solicitacao.email %>
+
+                                        </p>
+
+                                        <p class="mb-3">
+
+    <i class="bi bi-calendar me-2"></i>
+
+    <strong>Data da solicitação:</strong>
+
+    <%= new Date(solicitacao.dataSolicitacao).toLocaleDateString('pt-BR') %>
+
+</p>
+
+<div class="d-flex gap-2 flex-wrap">
+
+    <a
+
+        href="/admin/solicitacoes/editar/<%= solicitacao._id %>"
+
+        class="btn btn-primary"
+
+    >
+
+        <i class="bi bi-pencil-square me-1"></i>
+
+        Editar
+
+    </a>
+
+    <% if (solicitacao.status !== 'Aprovada') { %>
+
+        <form
+
+            action="/admin/solicitacoes/excluir/<%= solicitacao._id %>"
+
+            method="POST"
+
+            onsubmit="return confirm('Tem certeza que deseja excluir esta solicitação?');"
+
+        >
+
+            <button type="submit" class="btn btn-danger">
+
+                <i class="bi bi-trash me-1"></i>
+
+                Excluir
+
+            </button>
+
+        </form>
+
+    <% } %>
+
+</div>
+
+                                    </div>
+
+                                <% }) %>
+
+                                <% if (todasSolicitacoes.length === 0) { %>
+
+                                    <div class="empty-state p-4 text-center">
+
+                                        Nenhuma solicitação encontrada.
+
+                                    </div>
+
+                                <% } %>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Devoluções -->
+
+                        <div id="tab-devolucao" class="tab-content">
+
+                            <div class="content-title">
+
+                                <div>
+
+                                    <h2 class="h3 fw-bold mb-1">Registrar devoluções</h2>
+
+                                    <p class="text-secondary mb-0">
+
+                                        Marque os itens que foram devolvidos.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <div id="listaDevolucoes" class="d-grid gap-3 mt-4" aria-live="polite">
+
+                                <% emprestimosAtivos.forEach(emprestimo => { %>
+
+                                    <div class="material-card">
+
+                                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+
+                                            <div>
+
+                                                <h3 class="mb-1"><%= emprestimo.nomeUsuario %></h3>
+
+                                                <p class="mb-2">
+
+                                                    <strong>Material:</strong>
+
+                                                    <%= emprestimo.nomeMaterial %>
+
+                                                </p>
+
+                                            </div>
+
+                                            <span class="status">
+
+                                                <%= emprestimo.status %>
+
+                                            </span>
+
+                                        </div>
+
+                                        <hr>
+
+                                        <p class="mb-1">
+
+                                            <i class="bi bi-box-seam me-2"></i>
+
+                                            <strong>Quantidade:</strong>
+
+                                            <%= emprestimo.quantidade %>
+
+                                        </p>
+
+                                        <p class="mb-0">
+
+                                            <i class="bi bi-calendar me-2"></i>
+
+                                            <strong>Data do empréstimo:</strong>
+
+                                            <%= new Date(emprestimo.dataEmprestimo).toLocaleDateString('pt-BR') %>
+
+                                        </p>
+
+                                        <div class="mt-3">
+
+                                            <form action="/admin/devolver/<%= emprestimo._id %>" method="POST">
+
+                                                <button type="submit" class="btn btn-primary">
+
+                                                    <i class="bi bi-arrow-return-left me-1"></i>
+
+                                                    Registrar devolução
+
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+
+                                    </div>
+
+                                <% }) %>
+
+                                <% if (emprestimosAtivos.length === 0) { %>
+
+                                    <div class="empty-state p-4 text-center">
+
+                                        Nenhum empréstimo aguardando devolução.
+
+                                    </div>
+
+                                <% } %>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Gerenciar todos os empréstimos -->
+                        <div id="tab-gerenciar-emprestimos" class="tab-content <%= buscaEmprestimo ? 'active' : '' %>">
                             <div class="content-title mb-4">
                                 <div>
-                                    <h2 class="h3 fw-bold mb-1">Gerenciar solicitações</h2>
+                                    <h2 class="h3 fw-bold mb-1">Gerenciar empréstimos</h2>
                                     <p class="text-secondary mb-0">
-                                        Consulte todas as solicitações, incluindo pendentes, aprovadas e recusadas.
+                                        Consulte o histórico de empréstimos, pesquise registros e gerencie os dados.
                                     </p>
                                 </div>
                             </div>
 
-                            <!-- Pesquisa de solicitações -->
+                            <!-- Pesquisa de empréstimos -->
                             <form action="/admin" method="GET" class="mb-4">
                                 <div class="input-group">
                                     <input
                                         type="text"
-                                        name="buscaSolicitacao"
+                                        name="buscaEmprestimo"
                                         class="form-control"
-                                        placeholder="Pesquisar por usuário, e-mail ou material..."
-                                        value="<%= buscaSolicitacao || '' %>"
+                                        placeholder="Pesquisar por usuário ou material..."
+                                        value="<%= buscaEmprestimo || '' %>"
                                     >
-
                                     <button type="submit" class="btn btn-primary">
                                         <i class="bi bi-search me-1"></i>
                                         Pesquisar
                                     </button>
-
                                     <a href="/admin" class="btn btn-secondary">
                                         Limpar
                                     </a>
@@ -249,99 +687,11 @@
                             </form>
 
                             <div class="d-grid gap-3">
-
-                                <% todasSolicitacoes.forEach(solicitacao => { %>
+                                <% todosEmprestimos.forEach(emprestimo => { %>
                                     <div class="material-card">
-
-                                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-                                            <div>
-                                                <h3 class="mb-1"><%= solicitacao.nomeUsuario %></h3>
-
-                                                <p class="mb-2">
-                                                    <strong>Material:</strong>
-                                                    <%= solicitacao.nomeMaterial %>
-                                                </p>
-                                            </div>
-
-                                            <span class="status">
-                                                <%= solicitacao.status %>
-                                            </span>
-                                        </div>
-
-                                        <hr>
-
-                                        <p class="mb-1">
-                                            <i class="bi bi-telephone me-2"></i>
-                                            <%= solicitacao.telefone %>
-                                        </p>
-
-                                        <p class="mb-1">
-                                            <i class="bi bi-envelope me-2"></i>
-                                            <%= solicitacao.email %>
-                                        </p>
-
-                                        <p class="mb-3">
-    <i class="bi bi-calendar me-2"></i>
-    <strong>Data da solicitação:</strong>
-    <%= new Date(solicitacao.dataSolicitacao).toLocaleDateString('pt-BR') %>
-</p>
-
-
-<div class="d-flex gap-2 flex-wrap">
-    <a
-        href="/admin/solicitacoes/editar/<%= solicitacao._id %>"
-        class="btn btn-primary"
-    >
-        <i class="bi bi-pencil-square me-1"></i>
-        Editar
-    </a>
-
-    <% if (solicitacao.status !== 'Aprovada') { %>
-        <form
-            action="/admin/solicitacoes/excluir/<%= solicitacao._id %>"
-            method="POST"
-            onsubmit="return confirm('Tem certeza que deseja excluir esta solicitação?');"
-        >
-            <button type="submit" class="btn btn-danger">
-                <i class="bi bi-trash me-1"></i>
-                Excluir
-            </button>
-        </form>
-    <% } %>
-</div>
-
-                                    </div>
-                                <% }) %>
-
-                                <% if (todasSolicitacoes.length === 0) { %>
-                                    <div class="empty-state p-4 text-center">
-                                        Nenhuma solicitação encontrada.
-                                    </div>
-                                <% } %>
-
-                            </div>
-                        </div>
-
-                        <!-- Devoluções -->
-                        <div id="tab-devolucao" class="tab-content">
-                            <div class="content-title">
-                                <div>
-                                    <h2 class="h3 fw-bold mb-1">Registrar devoluções</h2>
-                                    <p class="text-secondary mb-0">
-                                        Marque os itens que foram devolvidos.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div id="listaDevolucoes" class="d-grid gap-3 mt-4" aria-live="polite">
-
-                                <% emprestimosAtivos.forEach(emprestimo => { %>
-                                    <div class="material-card">
-
                                         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                                             <div>
                                                 <h3 class="mb-1"><%= emprestimo.nomeUsuario %></h3>
-
                                                 <p class="mb-2">
                                                     <strong>Material:</strong>
                                                     <%= emprestimo.nomeMaterial %>
@@ -361,252 +711,415 @@
                                             <%= emprestimo.quantidade %>
                                         </p>
 
-                                        <p class="mb-0">
+                                        <p class="mb-3">
                                             <i class="bi bi-calendar me-2"></i>
                                             <strong>Data do empréstimo:</strong>
                                             <%= new Date(emprestimo.dataEmprestimo).toLocaleDateString('pt-BR') %>
                                         </p>
 
-                                        <div class="mt-3">
-                                            <form action="/admin/devolver/<%= emprestimo._id %>" method="POST">
-                                                <button type="submit" class="btn btn-primary">
-                                                    <i class="bi bi-arrow-return-left me-1"></i>
-                                                    Registrar devolução
-                                                </button>
-                                            </form>
-                                        </div>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <a
+                                                href="/admin/emprestimos/editar/<%= emprestimo._id %>"
+                                                class="btn btn-primary"
+                                            >
+                                                <i class="bi bi-pencil-square me-1"></i>
+                                                Editar
+                                            </a>
 
-                                    </div>
-                                <% }) %>
-
-                                <% if (emprestimosAtivos.length === 0) { %>
-                                    <div class="empty-state p-4 text-center">
-                                        Nenhum empréstimo aguardando devolução.
-                                    </div>
-                                <% } %>
-
-                            </div>
-                        </div>
-
-                        <!-- Cadastro de materiais -->
-                        <div id="tab-cadastro" class="tab-content">
-                            <div class="content-title mb-4">
-                                <div>
-                                    <h2 class="h3 fw-bold mb-1">Cadastrar material</h2>
-                                    <p class="text-secondary mb-0">
-                                        Adicione novos materiais ao catálogo da instituição.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <form action="/materiais/cadastrar" method="POST">
-                                <div class="mb-3">
-                                    <label for="nome" class="form-label">Nome do material</label>
-                                    <input type="text" class="form-control" id="nome" name="nome" required />
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="descricao" class="form-label">Descrição</label>
-                                    <textarea class="form-control" id="descricao" name="descricao" rows="3" required></textarea>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="quantidade" class="form-label">Quantidade</label>
-                                        <input type="number" class="form-control" id="quantidade" name="quantidade" min="0" value="0" required />
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label for="categoria" class="form-label">Categoria</label>
-                                        <input type="text" class="form-control" id="categoria" name="categoria" />
-                                    </div>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="imagem" class="form-label">Caminho da imagem</label>
-                                    <input type="text" class="form-control" id="imagem" name="imagem" placeholder="imagens/nome-do-arquivo.png" />
-                                    <div class="form-text">
-                                        Informe o caminho da imagem dentro da pasta public.
-                                    </div>
-                                </div>
-
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
-                                    Cadastrar material
-                                </button>
-                            </form>
-                        </div>
-
-                        <!-- Gerenciar materiais -->
-                        <div id="tab-materiais" class="tab-content <%= busca ? 'active' : '' %>">
-                            <div class="content-title mb-4">
-                                <div>
-                                    <h2 class="h3 fw-bold mb-1">Gerenciar materiais</h2>
-                                    <p class="text-secondary mb-0">
-                                        Consulte, pesquise e edite os materiais cadastrados.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Pesquisa de materiais -->
-                            <form action="/admin" method="GET" class="mb-4">
-                                <div class="input-group">
-                                    <input
-                                        type="text"
-                                        name="busca"
-                                        class="form-control"
-                                        placeholder="Pesquisar material pelo nome..."
-                                        value="<%= busca || '' %>"
-                                    >
-
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-search me-1"></i>
-                                        Pesquisar
-                                    </button>
-
-                                    <a href="/admin" class="btn btn-secondary">
-                                        Limpar
-                                    </a>
-                                </div>
-                            </form>
-
-                            <div class="d-grid gap-3">
-
-                                <% materiais.forEach(material => { %>
-                                    <div class="material-card">
-
-                                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
-                                            <div>
-                                                <h3 class="mb-1"><%= material.nome %></h3>
-
-                                                <p class="mb-1">
-                                                    <%= material.descricao %>
-                                                </p>
-
-                                                <p class="mb-1">
-                                                    <strong>Quantidade:</strong>
-                                                    <%= material.quantidade %> unidades
-                                                </p>
-
-                                                <p class="mb-0">
-                                                    <strong>Categoria:</strong>
-                                                    <%= material.categoria || 'Não informada' %>
-                                                </p>
-                                            </div>
-
-                                            <div class="d-flex gap-2">
-                                                <a href="/materiais/editar/<%= material._id %>" class="btn btn-primary">
-                                                    <i class="bi bi-pencil-square me-1"></i>
-                                                    Editar
-                                                </a>
-
-                                                <form action="/admin/excluir/<%= material._id %>" method="POST"
-                                                    onsubmit="return confirm('Tem certeza que deseja excluir este material?');">
-
-                                                    <button type="submit" class="btn btn-danger">
-                                                        <i class="bi bi-trash me-1"></i>
-                                                        Excluir
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                <% }) %>
-
-                                <% if (materiais.length === 0) { %>
-                                    <div class="empty-state p-4 text-center">
-                                        Nenhum material encontrado.
-                                    </div>
-                                <% } %>
-
-                            </div>
-                        </div>
-
-                        <!-- Gerenciar usuários -->
-                        <div id="tab-usuarios" class="tab-content <%= buscaUsuario ? 'active' : '' %>">
-                            <div class="content-title mb-4">
-                                <div>
-                                    <h2 class="h3 fw-bold mb-1">Gerenciar usuários</h2>
-                                    <p class="text-secondary mb-0">
-                                        Consulte, pesquise e gerencie os usuários cadastrados.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Pesquisa de usuários -->
-                            <form action="/admin" method="GET" class="mb-4">
-                                <div class="input-group">
-                                    <input
-                                        type="text"
-                                        name="buscaUsuario"
-                                        class="form-control"
-                                        placeholder="Pesquisar usuário pelo nome..."
-                                        value="<%= buscaUsuario || '' %>"
-                                    >
-
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-search me-1"></i>
-                                        Pesquisar
-                                    </button>
-
-                                    <a href="/admin" class="btn btn-secondary">
-                                        Limpar
-                                    </a>
-                                </div>
-                            </form>
-
-                            <div class="d-grid gap-3">
-
-                                <% usuarios.forEach(usuario => { %>
-                                    <div class="material-card">
-                                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-                                            <div>
-                                                <h3 class="mb-1"><%= usuario.nome %></h3>
-
-                                                <p class="mb-0">
-                                                    <strong>Tipo:</strong>
-                                                    <%= usuario.tipo %>
-                                                </p>
-                                            </div>
-
-                                            <div class="d-flex gap-2">
-                                                <a href="/admin/usuarios/editar/<%= usuario._id %>" class="btn btn-primary">
-                                                    <i class="bi bi-pencil-square me-1"></i>
-                                                    Editar
-                                                </a>
-
+                                            <% if (emprestimo.status === 'Devolvido') { %>
                                                 <form
-                                                    action="/admin/usuarios/excluir/<%= usuario._id %>"
+                                                    action="/admin/emprestimos/excluir/<%= emprestimo._id %>"
                                                     method="POST"
-                                                    onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');"
+                                                    onsubmit="return confirm('Tem certeza que deseja excluir este empréstimo devolvido?');"
                                                 >
                                                     <button type="submit" class="btn btn-danger">
                                                         <i class="bi bi-trash me-1"></i>
                                                         Excluir
                                                     </button>
                                                 </form>
-                                            </div>
+                                            <% } %>
                                         </div>
                                     </div>
                                 <% }) %>
 
-                                <% if (usuarios.length === 0) { %>
+                                <% if (todosEmprestimos.length === 0) { %>
                                     <div class="empty-state p-4 text-center">
-                                        Nenhum usuário encontrado.
+                                        Nenhum empréstimo encontrado.
                                     </div>
                                 <% } %>
-
                             </div>
                         </div>
 
+                        <!-- Cadastro de materiais -->
+
+                        <div id="tab-cadastro" class="tab-content">
+
+                            <div class="content-title mb-4">
+
+                                <div>
+
+                                    <h2 class="h3 fw-bold mb-1">Cadastrar material</h2>
+
+                                    <p class="text-secondary mb-0">
+
+                                        Adicione novos materiais ao catálogo da instituição.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <form action="/materiais/cadastrar" method="POST">
+
+                                <div class="mb-3">
+
+                                    <label for="nome" class="form-label">Nome do material</label>
+
+                                    <input type="text" class="form-control" id="nome" name="nome" required />
+
+                                </div>
+
+                                <div class="mb-3">
+
+                                    <label for="descricao" class="form-label">Descrição</label>
+
+                                    <textarea class="form-control" id="descricao" name="descricao" rows="3" required></textarea>
+
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-md-6 mb-3">
+
+                                        <label for="quantidade" class="form-label">Quantidade</label>
+
+                                        <input type="number" class="form-control" id="quantidade" name="quantidade" min="0" value="0" required />
+
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+
+                                        <label for="categoria" class="form-label">Categoria</label>
+
+                                        <input type="text" class="form-control" id="categoria" name="categoria" />
+
+                                    </div>
+
+                                </div>
+
+                                <div class="mb-4">
+
+                                    <label for="imagem" class="form-label">Caminho da imagem</label>
+
+                                    <input type="text" class="form-control" id="imagem" name="imagem" placeholder="imagens/nome-do-arquivo.png" />
+
+                                    <div class="form-text">
+
+                                        Informe o caminho da imagem dentro da pasta public.
+
+                                    </div>
+
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">
+
+                                    <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
+
+                                    Cadastrar material
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                        <!-- Gerenciar materiais -->
+
+                        <div id="tab-materiais" class="tab-content <%= busca ? 'active' : '' %>">
+
+                            <div class="content-title mb-4">
+
+                                <div>
+
+                                    <h2 class="h3 fw-bold mb-1">Gerenciar materiais</h2>
+
+                                    <p class="text-secondary mb-0">
+
+                                        Consulte, pesquise e edite os materiais cadastrados.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Pesquisa de materiais -->
+
+                            <form action="/admin" method="GET" class="mb-4">
+
+                                <div class="input-group">
+
+                                    <input
+
+                                        type="text"
+
+                                        name="busca"
+
+                                        class="form-control"
+
+                                        placeholder="Pesquisar material pelo nome..."
+
+                                        value="<%= busca || '' %>"
+
+                                    >
+
+                                    <button type="submit" class="btn btn-primary">
+
+                                        <i class="bi bi-search me-1"></i>
+
+                                        Pesquisar
+
+                                    </button>
+
+                                    <a href="/admin" class="btn btn-secondary">
+
+                                        Limpar
+
+                                    </a>
+
+                                </div>
+
+                            </form>
+
+                            <div class="d-grid gap-3">
+
+                                <% materiais.forEach(material => { %>
+
+                                    <div class="material-card">
+
+                                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+
+                                            <div>
+
+                                                <h3 class="mb-1"><%= material.nome %></h3>
+
+                                                <p class="mb-1">
+
+                                                    <%= material.descricao %>
+
+                                                </p>
+
+                                                <p class="mb-1">
+
+                                                    <strong>Quantidade:</strong>
+
+                                                    <%= material.quantidade %> unidades
+
+                                                </p>
+
+                                                <p class="mb-0">
+
+                                                    <strong>Categoria:</strong>
+
+                                                    <%= material.categoria || 'Não informada' %>
+
+                                                </p>
+
+                                            </div>
+
+                                            <div class="d-flex gap-2">
+
+                                                <a href="/materiais/editar/<%= material._id %>" class="btn btn-primary">
+
+                                                    <i class="bi bi-pencil-square me-1"></i>
+
+                                                    Editar
+
+                                                </a>
+
+                                                <form action="/admin/excluir/<%= material._id %>" method="POST"
+
+                                                    onsubmit="return confirm('Tem certeza que deseja excluir este material?');">
+
+                                                    <button type="submit" class="btn btn-danger">
+
+                                                        <i class="bi bi-trash me-1"></i>
+
+                                                        Excluir
+
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                <% }) %>
+
+                                <% if (materiais.length === 0) { %>
+
+                                    <div class="empty-state p-4 text-center">
+
+                                        Nenhum material encontrado.
+
+                                    </div>
+
+                                <% } %>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Gerenciar usuários -->
+
+                        <div id="tab-usuarios" class="tab-content <%= buscaUsuario ? 'active' : '' %>">
+
+                            <div class="content-title mb-4">
+
+                                <div>
+
+                                    <h2 class="h3 fw-bold mb-1">Gerenciar usuários</h2>
+
+                                    <p class="text-secondary mb-0">
+
+                                        Consulte, pesquise e gerencie os usuários cadastrados.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Pesquisa de usuários -->
+
+                            <form action="/admin" method="GET" class="mb-4">
+
+                                <div class="input-group">
+
+                                    <input
+
+                                        type="text"
+
+                                        name="buscaUsuario"
+
+                                        class="form-control"
+
+                                        placeholder="Pesquisar usuário pelo nome..."
+
+                                        value="<%= buscaUsuario || '' %>"
+
+                                    >
+
+                                    <button type="submit" class="btn btn-primary">
+
+                                        <i class="bi bi-search me-1"></i>
+
+                                        Pesquisar
+
+                                    </button>
+
+                                    <a href="/admin" class="btn btn-secondary">
+
+                                        Limpar
+
+                                    </a>
+
+                                </div>
+
+                            </form>
+
+                            <div class="d-grid gap-3">
+
+                                <% usuarios.forEach(usuario => { %>
+
+                                    <div class="material-card">
+
+                                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+
+                                            <div>
+
+                                                <h3 class="mb-1"><%= usuario.nome %></h3>
+
+                                                <p class="mb-0">
+
+                                                    <strong>Tipo:</strong>
+
+                                                    <%= usuario.tipo %>
+
+                                                </p>
+
+                                            </div>
+
+                                            <div class="d-flex gap-2">
+
+                                                <a href="/admin/usuarios/editar/<%= usuario._id %>" class="btn btn-primary">
+
+                                                    <i class="bi bi-pencil-square me-1"></i>
+
+                                                    Editar
+
+                                                </a>
+
+                                                <form
+
+                                                    action="/admin/usuarios/excluir/<%= usuario._id %>"
+
+                                                    method="POST"
+
+                                                    onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');"
+
+                                                >
+
+                                                    <button type="submit" class="btn btn-danger">
+
+                                                        <i class="bi bi-trash me-1"></i>
+
+                                                        Excluir
+
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                <% }) %>
+
+                                <% if (usuarios.length === 0) { %>
+
+                                    <div class="empty-state p-4 text-center">
+
+                                        Nenhum usuário encontrado.
+
+                                    </div>
+
+                                <% } %>
+
+                            </div>
+
+                        </div>
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
+
     </main>
 
     <script src="/js/admin.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
+
 </html>

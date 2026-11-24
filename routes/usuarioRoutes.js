@@ -31,7 +31,7 @@ router.post('/cadastro', async (req, res) => {
 
         await novoUsuario.save();
 
-        res.redirect('/login');
+        res.redirect('/usuarios/login');
     } catch (erro) {
         console.error('Erro ao cadastrar usuário:', erro);
         res.status(500).send('Erro ao cadastrar usuário.');
