@@ -1,6 +1,7 @@
 
 import express from 'express';
 import dotenv from 'dotenv';
+import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -31,6 +32,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Recebimento de formulários
 app.use(express.urlencoded({ extended: true }));
+
+// Configuração das sessões
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60
+    }
+}));
+
+// Disponibilizar o usuário logado para as páginas EJS
+app.use((req, res, next) => {
+    res.locals.usuarioLogado = req.session.usuario || null;
+    next();
+});
 
 // Registro das rotas
 app.use('/materiais', materialRoutes);

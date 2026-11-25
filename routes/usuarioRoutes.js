@@ -50,15 +50,35 @@ router.post('/login', async (req, res) => {
 
         const usuario = await Usuario.findOne({ nome, senha });
 
-        if (!usuario) {
-            return res.status(401).send('Nome de usuário ou senha incorretos.');
-        }
+if (!usuario) {
+    return res.status(401).send('Nome de usuário ou senha incorretos.');
+}
 
-        res.redirect('/solicitacoes');
+// Guardar o usuário na sessão
+req.session.usuario = {
+    id: usuario._id,
+    nome: usuario.nome
+};
+
+res.redirect('/solicitacoes');
     } catch (erro) {
         console.error('Erro ao realizar login:', erro);
         res.status(500).send('Erro ao realizar login.');
     }
 });
+
+ // Sair da conta
+router.get('/logout', (req, res) => {
+    req.session.destroy((erro) => {
+        if (erro) {
+            console.error('Erro ao encerrar sessão:', erro);
+            return res.status(500).send('Erro ao sair da conta.');
+        }
+
+        res.clearCookie('connect.sid');
+        res.redirect('/');
+    });
+});
+
 
 export default router;

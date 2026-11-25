@@ -1,6 +1,7 @@
 
 import express from 'express';
 
+import Doacao from '../models/Doacao.js';
 import Solicitacao from '../models/Solicitacao.js';
 import Emprestimo from '../models/Emprestimo.js';
 import Material from '../models/Material.js';
@@ -94,6 +95,32 @@ const filtro = busca
     ? { nome: { $regex: busca, $options: 'i' } }
     : {};
 
+// Buscar e pesquisar doações
+const buscaDoacao = req.query.buscaDoacao || '';
+
+const filtroDoacao = buscaDoacao
+    ? {
+        $or: [
+            {
+                nomeDoador: {
+                    $regex: buscaDoacao,
+                    $options: 'i'
+                }
+            },
+            {
+                nomeMaterial: {
+                    $regex: buscaDoacao,
+                    $options: 'i'
+                }
+            }
+        ]
+    }
+    : {};
+
+const doacoes = await Doacao.find(filtroDoacao).sort({
+    dataDoacao: -1
+});
+
 const materiais = await Material.find(filtro).sort({ nome: 1 });
         res.render('admin', {
             solicitacoesPendentes: solicitacoesComImagem,
@@ -103,12 +130,16 @@ const materiais = await Material.find(filtro).sort({ nome: 1 });
             buscaEmprestimo,
             materiais,
             busca,
+            doacoes,
+            buscaDoacao,
+            abaAtiva: req.query.aba || '',
             usuarios,
             buscaUsuario,
             buscaSolicitacao,
             totalPendentes: solicitacoesPendentes.length,
             totalAtivos: emprestimosAtivos.length,
             totalMateriais
+            
         });
 
     } catch (erro) {
@@ -496,6 +527,95 @@ router.post('/emprestimos/excluir/:id', async (req, res) => {
     } catch (erro) {
         console.error('Erro ao excluir empréstimo:', erro);
         res.status(500).send('Erro ao excluir empréstimo.');
+    }
+});
+
+// Cadastrar doação pelo painel administrativo
+router.post('/doacoes/cadastrar', async (req, res) => {
+    try {
+        const {
+            nomeDoador,
+            nomeMaterial,
+            quantidade,
+            descricao
+        } = req.body;
+
+        await Doacao.create({
+            nomeDoador,
+            nomeMaterial,
+            quantidade: Number(quantidade),
+            descricao
+        });
+
+        res.redirect('/admin?aba=doacoes');
+
+    } catch (erro) {
+        console.error('Erro ao cadastrar doação:', erro);
+        res.status(500).send('Erro ao cadastrar a doação.');
+    }
+});
+
+// Excluir doação pelo painel administrativo
+router.post('/doacoes/excluir/:id', async (req, res) => {
+    try {
+        const doacao = await Doacao.findByIdAndDelete(req.params.id);
+
+        if (!doacao) {
+            return res.status(404).send('Doação não encontrada.');
+        }
+
+        res.redirect('/admin?aba=doacoes');
+
+    } catch (erro) {
+        console.error('Erro ao excluir doação:', erro);
+        res.status(500).send('Erro ao excluir a doação.');
+    }
+});
+
+// Exibir formulário de edição de doação
+router.get('/doacoes/editar/:id', async (req, res) => {
+    try {
+        const doacao = await Doacao.findById(req.params.id);
+
+        if (!doacao) {
+            return res.status(404).send('Doação não encontrada.');
+        }
+
+        res.render('editarDoacao', { doacao, origemAdmin: true });
+
+    } catch (erro) {
+        console.error('Erro ao buscar doação para edição:', erro);
+        res.status(500).send('Erro ao carregar formulário de edição.');
+    }
+});
+ // Atualizar doação pelo painel administrativo
+router.post('/doacoes/editar/:id', async (req, res) => {
+    try {
+        const {
+            nomeDoador,
+            nomeMaterial,
+            quantidade,
+            descricao
+        } = req.body;
+
+        const doacao = await Doacao.findById(req.params.id);
+
+        if (!doacao) {
+            return res.status(404).send('Doação não encontrada.');
+        }
+
+        doacao.nomeDoador = nomeDoador;
+        doacao.nomeMaterial = nomeMaterial;
+        doacao.quantidade = Number(quantidade);
+        doacao.descricao = descricao;
+
+        await doacao.save();
+
+        res.redirect('/admin?aba=doacoes');
+
+    } catch (erro) {
+        console.error('Erro ao editar doação:', erro);
+        res.status(500).send('Erro ao editar a doação.');
     }
 });
 

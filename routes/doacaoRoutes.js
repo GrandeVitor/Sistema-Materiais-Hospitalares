@@ -59,7 +59,7 @@ router.get('/editar/:id', async (req, res) => {
         }
 
         res.render('editarDoacao', {
-            doacao
+            doacao, origemAdmin: true
         });
     } catch (erro) {
         console.error('Erro ao buscar doação:', erro);

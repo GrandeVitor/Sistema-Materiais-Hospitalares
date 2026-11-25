@@ -1,11 +1,10 @@
-
 <!doctype html>
 <html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Painel administrativo para gerenciamento de materiais, solicitações, devoluções e usuários." />
+    <meta name="description" content="Painel administrativo para gerenciamento de materiais, solicitações, devoluções, doações e usuários." />
     <title>Área administrativa | Comunidade 3 de Maio</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -18,27 +17,91 @@
     <nav class="navbar navbar-expand-lg site-navbar sticky-top" aria-label="Navegação principal">
         <div class="container">
             <a class="navbar-brand site-logo" href="/">
-                <i class="bi bi-heart-pulse me-2" aria-hidden="true"></i>3 de Maio
+                <i class="bi bi-heart-pulse me-2" aria-hidden="true"></i>
+                3 de Maio
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menu">
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#menuPrincipal"
+                aria-controls="menuPrincipal"
+                aria-expanded="false"
+                aria-label="Abrir menu"
+            >
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="menuPrincipal">
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+
                     <li class="nav-item">
                         <a class="nav-link" href="/">Início</a>
                     </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="/materiais">Materiais</a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" href="/solicitacoes">Minhas solicitações</a>
+                        <a class="nav-link" href="/solicitacoes">
+                            Minhas solicitações
+                        </a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/admin">Área administrativa</a>
+                        <a
+                            class="nav-link active"
+                            aria-current="page"
+                            href="/admin"
+                        >
+                            Área administrativa
+                        </a>
                     </li>
+
+                    <% if (usuarioLogado) { %>
+
+                        <li class="nav-item">
+                            <span class="nav-link">
+                                Olá, <%= usuarioLogado.nome %>!
+                            </span>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/usuarios/logout">
+                                <i
+                                    class="bi bi-box-arrow-right me-1"
+                                    aria-hidden="true"
+                                ></i>
+                                Sair
+                            </a>
+                        </li>
+
+                    <% } else { %>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/usuarios/login">
+                                <i
+                                    class="bi bi-box-arrow-in-right me-1"
+                                    aria-hidden="true"
+                                ></i>
+                                Entrar
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/usuarios/cadastro">
+                                <i
+                                    class="bi bi-person-plus me-1"
+                                    aria-hidden="true"
+                                ></i>
+                                Criar conta
+                            </a>
+                        </li>
+
+                    <% } %>
+
                 </ul>
             </div>
         </div>
@@ -51,7 +114,7 @@
                 <span class="section-kicker">Gestão</span>
                 <h1 class="fw-bold mt-1">Área administrativa</h1>
                 <p class="text-secondary mb-0">
-                    Gerencie materiais, solicitações, devoluções e usuários.
+                    Gerencie materiais, solicitações, devoluções, doações e usuários.
                 </p>
             </div>
 
@@ -102,45 +165,77 @@
                 <div class="col-12 col-lg-3">
                     <div class="admin-sidebar d-grid gap-2">
 
-                        <button type="button" onclick="showTab('tab-emprestimo', this)" class="tab-btn <%= (busca || buscaUsuario || buscaSolicitacao || buscaEmprestimo) ? '' : 'active' %> rounded-3 p-3">
+                        <button
+                            type="button"
+                            onclick="showTab('tab-emprestimo', this)"
+                            class="tab-btn <%= (busca || buscaUsuario || buscaSolicitacao || buscaEmprestimo || buscaDoacao || abaAtiva) ? '' : 'active' %> rounded-3 p-3"
+                        >
                             <i class="bi bi-inbox me-2" aria-hidden="true"></i>
                             Solicitações
                         </button>
 
-                        <button type="button" onclick="showTab('tab-solicitacoes', this)" class="tab-btn <%= buscaSolicitacao ? 'active' : '' %> rounded-3 p-3">
+                        <button
+                            type="button"
+                            onclick="showTab('tab-solicitacoes', this)"
+                            class="tab-btn <%= buscaSolicitacao ? 'active' : '' %> rounded-3 p-3"
+                        >
                             <i class="bi bi-clipboard-list me-2" aria-hidden="true"></i>
                             Gerenciar solicitações
                         </button>
 
-                        <button type="button" onclick="showTab('tab-devolucao', this)" class="tab-btn rounded-3 p-3">
+                        <button
+                            type="button"
+                            onclick="showTab('tab-devolucao', this)"
+                            class="tab-btn rounded-3 p-3"
+                        >
                             <i class="bi bi-arrow-return-left me-2" aria-hidden="true"></i>
                             Devoluções
                         </button>
 
-                        <button type="button" onclick="showTab('tab-gerenciar-emprestimos', this)" class="tab-btn <%= buscaEmprestimo ? 'active' : '' %> rounded-3 p-3">
+                        <button
+                            type="button"
+                            onclick="showTab('tab-gerenciar-emprestimos', this)"
+                            class="tab-btn <%= buscaEmprestimo ? 'active' : '' %> rounded-3 p-3"
+                        >
                             <i class="bi bi-journal-text me-2" aria-hidden="true"></i>
                             Gerenciar empréstimos
                         </button>
 
-                        <button type="button" onclick="showTab('tab-cadastro', this)" class="tab-btn rounded-3 p-3">
+                        <button
+                            type="button"
+                            onclick="showTab('tab-cadastro', this)"
+                            class="tab-btn rounded-3 p-3"
+                        >
                             <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
                             Cadastrar material
                         </button>
 
-                        <button type="button" onclick="showTab('tab-materiais', this)" class="tab-btn <%= busca ? 'active' : '' %> rounded-3 p-3">
+                        <button
+                            type="button"
+                            onclick="showTab('tab-materiais', this)"
+                            class="tab-btn <%= busca ? 'active' : '' %> rounded-3 p-3"
+                        >
                             <i class="bi bi-pencil-square me-2" aria-hidden="true"></i>
                             Gerenciar materiais
                         </button>
 
-                        <button type="button" onclick="showTab('tab-usuarios', this)" class="tab-btn <%= buscaUsuario ? 'active' : '' %> rounded-3 p-3">
+                        <button
+                            type="button"
+                            onclick="showTab('tab-doacoes', this)"
+                            class="tab-btn <%= (buscaDoacao || abaAtiva === 'doacoes') ? 'active' : '' %> rounded-3 p-3"
+                        >
+                            <i class="bi bi-gift me-2" aria-hidden="true"></i>
+                            Gerenciar doações
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="showTab('tab-usuarios', this)"
+                            class="tab-btn <%= buscaUsuario ? 'active' : '' %> rounded-3 p-3"
+                        >
                             <i class="bi bi-people me-2" aria-hidden="true"></i>
                             Gerenciar usuários
                         </button>
-
-                        <a href="/doacoes" class="tab-btn rounded-3 p-3 text-decoration-none">
-                            <i class="bi bi-gift me-2" aria-hidden="true"></i>
-                            Gerenciar doações
-                        </a>
 
                     </div>
                 </div>
@@ -149,7 +244,10 @@
                     <div class="content-card p-4 p-md-5">
 
                         <!-- Solicitações pendentes -->
-                        <div id="tab-emprestimo" class="tab-content <%= (busca || buscaUsuario || buscaSolicitacao || buscaEmprestimo) ? '' : 'active' %>">
+                        <div
+                            id="tab-emprestimo"
+                            class="tab-content <%= (busca || buscaUsuario || buscaSolicitacao || buscaEmprestimo || buscaDoacao || abaAtiva) ? '' : 'active' %>"
+                        >
 
                             <div class="content-title">
                                 <div>
@@ -615,9 +713,18 @@
                             <div class="d-grid gap-3">
 
                                 <% materiais.forEach(material => { %>
-                                    <div class="material-card">
 
+                                    <div class="material-card">
                                         <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+
+                                            <!-- Imagem do material -->
+                                            <% if (material.imagem) { %>
+                                                <img
+                                                    src="<%= material.imagem %>"
+                                                    alt="<%= material.nome %>"
+                                                    class="material-img-right"
+                                                >
+                                            <% } %>
 
                                             <div>
                                                 <h3 class="mb-1"><%= material.nome %></h3>
@@ -657,6 +764,7 @@
 
                                         </div>
                                     </div>
+
                                 <% }) %>
 
                                 <% if (materiais.length === 0) { %>
@@ -666,6 +774,231 @@
                                 <% } %>
 
                             </div>
+                        </div>
+
+                        <!-- Gerenciar doações -->
+                        <div
+                            id="tab-doacoes"
+                            class="tab-content <%= (buscaDoacao || abaAtiva === 'doacoes') ? 'active' : '' %>"
+                        >
+
+                            <div class="content-title mb-4">
+                                <div>
+                                    <h2 class="h3 fw-bold mb-1">Gerenciar doações</h2>
+                                    <p class="text-secondary mb-0">
+                                        Cadastre, consulte, edite e exclua as doações recebidas.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Cadastrar doação -->
+                            <div class="material-card mb-4">
+
+                                <h3 class="h5 fw-bold mb-3">
+                                    <i class="bi bi-plus-circle me-2"></i>
+                                    Cadastrar doação
+                                </h3>
+
+                                <form action="/admin/doacoes/cadastrar" method="POST">
+
+                                    <div class="row g-3">
+
+                                        <div class="col-md-6">
+                                            <label for="nomeDoador" class="form-label">
+                                                Nome do doador
+                                            </label>
+
+                                            <input
+                                                type="text"
+                                                id="nomeDoador"
+                                                name="nomeDoador"
+                                                class="form-control"
+                                                required
+                                            >
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="nomeMaterial" class="form-label">
+                                                Material doado
+                                            </label>
+
+                                            <input
+                                                type="text"
+                                                id="nomeMaterial"
+                                                name="nomeMaterial"
+                                                class="form-control"
+                                                required
+                                            >
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="quantidadeDoacao" class="form-label">
+                                                Quantidade
+                                            </label>
+
+                                            <input
+                                                type="number"
+                                                id="quantidadeDoacao"
+                                                name="quantidade"
+                                                class="form-control"
+                                                min="1"
+                                                required
+                                            >
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label for="descricaoDoacao" class="form-label">
+                                                Descrição
+                                            </label>
+
+                                            <textarea
+                                                id="descricaoDoacao"
+                                                name="descricao"
+                                                class="form-control"
+                                                rows="3"
+                                            ></textarea>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="bi bi-plus-lg me-2"></i>
+                                                Cadastrar doação
+                                            </button>
+                                        </div>
+
+                                    </div>
+
+                                </form>
+
+                            </div>
+
+                            <!-- Pesquisar doações -->
+                            <div class="material-card mb-4">
+
+                                <h3 class="h5 fw-bold mb-3">
+                                    <i class="bi bi-search me-2"></i>
+                                    Pesquisar doações
+                                </h3>
+
+                                <form action="/admin" method="GET">
+
+                                    <input
+                                        type="hidden"
+                                        name="aba"
+                                        value="doacoes"
+                                    >
+
+                                    <div class="input-group">
+
+                                        <input
+                                            type="text"
+                                            name="buscaDoacao"
+                                            class="form-control"
+                                            placeholder="Pesquisar por doador ou material..."
+                                            value="<%= buscaDoacao || '' %>"
+                                        >
+
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-search me-1"></i>
+                                            Pesquisar
+                                        </button>
+
+                                        <a href="/admin?aba=doacoes" class="btn btn-secondary">
+                                            Limpar
+                                        </a>
+
+                                    </div>
+
+                                </form>
+
+                            </div>
+
+                            <!-- Lista de doações -->
+                            <div class="material-card">
+
+                                <h3 class="h5 fw-bold mb-3">
+                                    Doações cadastradas
+                                </h3>
+
+                                <% if (doacoes && doacoes.length > 0) { %>
+
+                                    <div class="d-grid gap-3">
+
+                                        <% doacoes.forEach(doacao => { %>
+
+                                            <div class="border rounded-3 p-3">
+
+                                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+
+                                                    <div>
+                                                        <h4 class="h5 fw-bold mb-1">
+                                                            <%= doacao.nomeMaterial %>
+                                                        </h4>
+
+                                                        <p class="mb-1">
+                                                            <strong>Doador:</strong>
+                                                            <%= doacao.nomeDoador %>
+                                                        </p>
+
+                                                        <p class="mb-1">
+                                                            <strong>Quantidade:</strong>
+                                                            <%= doacao.quantidade %>
+                                                        </p>
+
+                                                        <p class="mb-1">
+                                                            <strong>Data da doação:</strong>
+                                                            <%= new Date(doacao.dataDoacao).toLocaleDateString('pt-BR') %>
+                                                        </p>
+
+                                                        <% if (doacao.descricao) { %>
+                                                            <p class="mb-0">
+                                                                <strong>Descrição:</strong>
+                                                                <%= doacao.descricao %>
+                                                            </p>
+                                                        <% } %>
+                                                    </div>
+
+                                                    <div class="d-flex gap-2 flex-wrap">
+
+                                                        <a
+                                                            href="/admin/doacoes/editar/<%= doacao._id %>"
+                                                            class="btn btn-primary btn-sm"
+                                                        >
+                                                            <i class="bi bi-pencil-square me-1"></i>
+                                                            Editar
+                                                        </a>
+
+                                                        <form
+                                                            action="/admin/doacoes/excluir/<%= doacao._id %>"
+                                                            method="POST"
+                                                            onsubmit="return confirm('Deseja realmente excluir esta doação?');"
+                                                        >
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="bi bi-trash me-1"></i>
+                                                                Excluir
+                                                            </button>
+                                                        </form>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                        <% }) %>
+
+                                    </div>
+
+                                <% } else { %>
+
+                                    <div class="empty-state p-4 text-center">
+                                        Nenhuma doação encontrada.
+                                    </div>
+
+                                <% } %>
+
+                            </div>
+
                         </div>
 
                         <!-- Gerenciar usuários -->
@@ -758,20 +1091,24 @@
 
     <!-- Pré-visualização da imagem selecionada -->
     <script>
-        document.getElementById('imagem').addEventListener('change', function () {
+        const campoImagem = document.getElementById('imagem');
 
-            const preview = document.getElementById('previewImagem');
-            const arquivo = this.files[0];
+        if (campoImagem) {
+            campoImagem.addEventListener('change', function () {
 
-            if (arquivo) {
-                preview.src = URL.createObjectURL(arquivo);
-                preview.style.display = 'block';
-            } else {
-                preview.src = '';
-                preview.style.display = 'none';
-            }
+                const preview = document.getElementById('previewImagem');
+                const arquivo = this.files[0];
 
-        });
+                if (arquivo) {
+                    preview.src = URL.createObjectURL(arquivo);
+                    preview.style.display = 'block';
+                } else {
+                    preview.src = '';
+                    preview.style.display = 'none';
+                }
+
+            });
+        }
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

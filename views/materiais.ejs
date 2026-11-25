@@ -1,194 +1,282 @@
 
 <!doctype html>
 <html lang="pt-BR">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
-      name="description"
-      content="Consulte os materiais hospitalares disponíveis para empréstimo."
+        name="description"
+        content="Consulte os materiais hospitalares disponíveis para empréstimo."
     />
+
     <title>Materiais | Comunidade 3 de Maio</title>
 
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
     />
+
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-      rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet"
     />
+
     <link rel="stylesheet" href="/css/style.css" />
-  </head>
+</head>
 
-  <body>
+<body>
     <nav class="navbar navbar-expand-lg site-navbar sticky-top"
-      aria-label="Navegação principal">
-      <div class="container">
-        <a class="navbar-brand site-logo" href="/">
-          <i class="bi bi-heart-pulse me-2" aria-hidden="true"></i>3 de Maio
-        </a>
+        aria-label="Navegação principal">
 
-        <button class="navbar-toggler" type="button"
-          data-bs-toggle="collapse" data-bs-target="#menuPrincipal"
-          aria-controls="menuPrincipal" aria-expanded="false"
-          aria-label="Abrir menu">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+        <div class="container">
+            <a class="navbar-brand site-logo" href="/">
+                <i class="bi bi-heart-pulse me-2" aria-hidden="true"></i>
+                3 de Maio
+            </a>
 
-        <div class="collapse navbar-collapse" id="menuPrincipal">
-          <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
-            <li class="nav-item">
-              <a class="nav-link" href="/">Início</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page"
-                href="/materiais">Materiais</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/solicitacoes">Minhas solicitações</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/admin">Área administrativa</a>
-            </li>
-          </ul>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#menuPrincipal"
+                aria-controls="menuPrincipal"
+                aria-expanded="false"
+                aria-label="Abrir menu">
+
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="menuPrincipal">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Início</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a
+                            class="nav-link active"
+                            aria-current="page"
+                            href="/materiais">
+                            Materiais
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/solicitacoes">
+                            Minhas solicitações
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">
+                            Área administrativa
+                        </a>
+                    </li>
+
+                    <% if (usuarioLogado) { %>
+
+                        <li class="nav-item">
+                            <span class="nav-link">
+                                Olá, <%= usuarioLogado.nome %>!
+                            </span>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/usuarios/logout">
+                                <i
+                                    class="bi bi-box-arrow-right me-1"
+                                    aria-hidden="true">
+                                </i>
+                                Sair
+                            </a>
+                        </li>
+
+                    <% } else { %>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/usuarios/login">
+                                <i
+                                    class="bi bi-box-arrow-in-right me-1"
+                                    aria-hidden="true">
+                                </i>
+                                Entrar
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/usuarios/cadastro">
+                                <i
+                                    class="bi bi-person-plus me-1"
+                                    aria-hidden="true">
+                                </i>
+                                Criar conta
+                            </a>
+                        </li>
+
+                    <% } %>
+
+                </ul>
+            </div>
         </div>
-      </div>
     </nav>
 
     <main class="py-5">
-      <div class="container">
+        <div class="container">
 
-        <div class="page-header mb-4">
-          <span class="section-kicker">Catálogo</span>
-          <h1 class="fw-bold mt-1">Materiais disponíveis</h1>
-          <p class="text-secondary mb-0">
-            Encontre um item e solicite o empréstimo quando estiver disponível.
-          </p>
-        </div>
+            <div class="page-header mb-4">
+                <span class="section-kicker">Catálogo</span>
 
-        <div class="catalog-toolbar mb-4">
-          <div class="search-box flex-grow-1">
-            <label for="busca" class="form-label visually-hidden">
-              Buscar material
-            </label>
+                <h1 class="fw-bold mt-1">
+                    Materiais disponíveis
+                </h1>
 
-            <div class="input-group input-group-lg">
-              <span class="input-group-text" aria-hidden="true">
-                <i class="bi bi-search"></i>
-              </span>
-              <input
-                type="search"
-                id="busca"
-                class="form-control"
-                placeholder="Buscar por nome do material..."
-                autocomplete="off"
-              />
+                <p class="text-secondary mb-0">
+                    Encontre um item e solicite o empréstimo quando estiver disponível.
+                </p>
             </div>
-          </div>
 
-          <div class="catalog-hint">
-            <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
-            Escolha um item para solicitar
-          </div>
-        </div>
+            <div class="catalog-toolbar mb-4">
+                <div class="search-box flex-grow-1">
 
-        <div
-          id="materiaisContainer"
-          class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4"
-          aria-live="polite"
-        >
+                    <label for="busca" class="form-label visually-hidden">
+                        Buscar material
+                    </label>
 
-          <% if (materiais.length === 0) { %>
-            <div class="col-12">
-              <div class="empty-state text-center p-4">
-                Nenhum material cadastrado até o momento.
-              </div>
-            </div>
-          <% } else { %>
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text" aria-hidden="true">
+                            <i class="bi bi-search"></i>
+                        </span>
 
-            <% materiais.forEach(material => { %>
-
-              <div class="col material-item"
-                data-nome="<%= material.nome.toLowerCase() %>">
-
-                <div class="material-card">
-
-                  <% if (material.imagem) { %>
-                    <img
-                      src="/<%= material.imagem.replace(/^\/+/, '') %>"
-                      class="material-img"
-                      alt="<%= material.nome %>"
-                    />
-                  <% } else { %>
-                    <div class="material-img d-flex align-items-center justify-content-center">
-                      <i class="bi bi-box-seam fs-1 text-secondary"></i>
+                        <input
+                            type="search"
+                            id="busca"
+                            class="form-control"
+                            placeholder="Buscar por nome do material..."
+                            autocomplete="off"
+                        />
                     </div>
-                  <% } %>
-
-                  <h3><%= material.nome %></h3>
-
-                  <p><%= material.descricao %></p>
-
-                  <p>
-                    <strong>Quantidade:</strong>
-                    <%= material.quantidade %> unidades
-                  </p>
-
-                  <% if (material.categoria) { %>
-                    <p>
-                      <strong>Categoria:</strong>
-                      <%= material.categoria %>
-                    </p>
-                  <% } %>
-
-                  <% if (material.quantidade > 0) { %>
-                    <span class="status disponivel">
-                      Disponível
-                    </span>
-
-                    <div class="mt-3">
-                      <a href="/solicitar?material=<%= encodeURIComponent(material.nome) %>" class="btn btn-primary-custom">
-    Solicitar empréstimo
-</a>
-                    </div>
-                  <% } else { %>
-                    <span class="status indisponivel">
-                      Indisponível
-                    </span>
-
-                    <div class="mt-3">
-                      <button class="btn btn-outline-custom w-100" disabled>
-                        Material indisponível
-                      </button>
-                    </div>
-                  <% } %>
-
                 </div>
-              </div>
 
-            <% }); %>
+                <div class="catalog-hint">
+                    <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+                    Escolha um item para solicitar
+                </div>
+            </div>
 
-          <% } %>
+            <div
+                id="materiaisContainer"
+                class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4"
+                aria-live="polite">
 
+                <% if (materiais.length === 0) { %>
+
+                    <div class="col-12">
+                        <div class="empty-state text-center p-4">
+                            Nenhum material cadastrado até o momento.
+                        </div>
+                    </div>
+
+                <% } else { %>
+
+                    <% materiais.forEach(material => { %>
+
+                        <div
+                            class="col material-item"
+                            data-nome="<%= material.nome.toLowerCase() %>">
+
+                            <div class="material-card">
+
+                                <% if (material.imagem) { %>
+
+                                    <img
+                                        src="/<%= material.imagem.replace(/^\/+/, '') %>"
+                                        class="material-img"
+                                        alt="<%= material.nome %>"
+                                    />
+
+                                <% } else { %>
+
+                                    <div class="material-img d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-box-seam fs-1 text-secondary"></i>
+                                    </div>
+
+                                <% } %>
+
+                                <h3><%= material.nome %></h3>
+
+                                <p><%= material.descricao %></p>
+
+                                <p>
+                                    <strong>Quantidade:</strong>
+                                    <%= material.quantidade %> unidades
+                                </p>
+
+                                <% if (material.categoria) { %>
+
+                                    <p>
+                                        <strong>Categoria:</strong>
+                                        <%= material.categoria %>
+                                    </p>
+
+                                <% } %>
+
+                                <% if (material.quantidade > 0) { %>
+
+                                    <span class="status disponivel">
+                                        Disponível
+                                    </span>
+
+                                    <div class="mt-3">
+                                        <a
+                                            href="/solicitar?material=<%= encodeURIComponent(material.nome) %>"
+                                            class="btn btn-primary-custom">
+                                            Solicitar empréstimo
+                                        </a>
+                                    </div>
+
+                                <% } else { %>
+
+                                    <span class="status indisponivel">
+                                        Indisponível
+                                    </span>
+
+                                    <div class="mt-3">
+                                        <button
+                                            class="btn btn-outline-custom w-100"
+                                            disabled>
+                                            Material indisponível
+                                        </button>
+                                    </div>
+
+                                <% } %>
+
+                            </div>
+                        </div>
+
+                    <% }); %>
+
+                <% } %>
+
+            </div>
         </div>
-      </div>
     </main>
 
     <script>
-      const campoBusca = document.getElementById('busca');
-      const materiais = document.querySelectorAll('.material-item');
+        const campoBusca = document.getElementById('busca');
+        const materiais = document.querySelectorAll('.material-item');
 
-      campoBusca.addEventListener('input', () => {
-        const pesquisa = campoBusca.value.toLowerCase();
+        campoBusca.addEventListener('input', () => {
+            const pesquisa = campoBusca.value.toLowerCase();
 
-        materiais.forEach(item => {
-          const nome = item.dataset.nome;
-          item.style.display = nome.includes(pesquisa) ? '' : 'none';
+            materiais.forEach(item => {
+                const nome = item.dataset.nome;
+
+                item.style.display = nome.includes(pesquisa) ? '' : 'none';
+            });
         });
-      });
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+</body>
 </html>

@@ -57,18 +57,32 @@
             <li class="nav-item">
               <a class="nav-link" href="/admin">Área administrativa</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/usuarios/login">
-                <i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i>
-                Entrar
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/usuarios/cadastro">
-                <i class="bi bi-person-plus me-1" aria-hidden="true"></i>
-                Criar conta
-              </a>
-            </li>
+            <% if (usuarioLogado) { %>
+              <li class="nav-item">
+                <span class="nav-link">
+                  Olá, <%= usuarioLogado.nome %>!
+                </span>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/usuarios/logout">
+                  <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>
+                  Sair
+                </a>
+              </li>
+            <% } else { %>
+              <li class="nav-item">
+                <a class="nav-link" href="/usuarios/login">
+                  <i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i>
+                  Entrar
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/usuarios/cadastro">
+                  <i class="bi bi-person-plus me-1" aria-hidden="true"></i>
+                  Criar conta
+                </a>
+              </li>
+            <% } %>
           </ul>
         </div>
       </div>
@@ -122,6 +136,64 @@
                   alt="Símbolo da instituição responsável pelo projeto"
                   class="hero-image"
                 />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="py-5" aria-labelledby="equipe-title">
+        <div class="container">
+          <div class="missao-box p-4 p-md-5">
+            <div class="text-center section-heading mb-4">
+              <span class="section-kicker">Quem somos</span>
+              <h2 id="equipe-title" class="h2 fw-bold mt-1">
+                Desenvolvido por
+              </h2>
+              <p class="text-secondary mb-0">
+                Projeto Integrador — Sistemas para Internet
+              </p>
+            </div>
+
+            <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-5 g-3">
+              <div class="col">
+                <div class="material-card text-center p-3 h-100">
+                  <div class="feature-icon mx-auto mb-3">
+                    <i class="bi bi-person-fill" aria-hidden="true"></i>
+                  </div>
+                  <h3 class="h5 mb-0">Andrei Castro Serpa</h3>
+                </div>
+              </div>
+              <div class="col">
+                <div class="material-card text-center p-3 h-100">
+                  <div class="feature-icon mx-auto mb-3">
+                    <i class="bi bi-person-fill" aria-hidden="true"></i>
+                  </div>
+                  <h3 class="h5 mb-0">Luis Carlos Bosenbecker</h3>
+                </div>
+              </div>
+              <div class="col">
+                <div class="material-card text-center p-3 h-100">
+                  <div class="feature-icon mx-auto mb-3">
+                    <i class="bi bi-person-fill" aria-hidden="true"></i>
+                  </div>
+                  <h3 class="h5 mb-0">Silvia Helena Brum</h3>
+                </div>
+              </div>
+              <div class="col">
+                <div class="material-card text-center p-3 h-100">
+                  <div class="feature-icon mx-auto mb-3">
+                    <i class="bi bi-person-fill" aria-hidden="true"></i>
+                  </div>
+                  <h3 class="h5 mb-0">Talis Coruja</h3>
+                </div>
+              </div>
+              <div class="col">
+                <div class="material-card text-center p-3 h-100">
+                  <div class="feature-icon mx-auto mb-3">
+                    <i class="bi bi-person-fill" aria-hidden="true"></i>
+                  </div>
+                  <h3 class="h5 mb-0">Vitor da Silva Rodrigues</h3>
+                </div>
               </div>
             </div>
           </div>
