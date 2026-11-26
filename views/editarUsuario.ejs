@@ -56,19 +56,6 @@
                         >
                     </div>
 
-                    <div class="mb-4">
-                        <label for="tipo" class="form-label">Tipo de usuário</label>
-                        <select class="form-select" id="tipo" name="tipo" required>
-                            <option value="usuario" <%= usuario.tipo === 'usuario' ? 'selected' : '' %>>
-                                Usuário
-                            </option>
-
-                            <option value="administrador" <%= usuario.tipo === 'administrador' ? 'selected' : '' %>>
-                                Administrador
-                            </option>
-                        </select>
-                    </div>
-
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">
                             Salvar alterações

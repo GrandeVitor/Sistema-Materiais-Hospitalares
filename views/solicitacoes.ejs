@@ -133,39 +133,62 @@
                     Minhas solicitações
                 </h1>
 
-                <p class="text-secondary mb-0">
-                    Informe seu e-mail para consultar seus pedidos.
-                </p>
+                <% if (usuarioLogado) { %>
+
+                    <p class="text-secondary mb-0">
+                        Consulte as solicitações vinculadas à sua conta.
+                    </p>
+
+                <% } else { %>
+
+                    <p class="text-secondary mb-0">
+                        Informe seu e-mail para consultar seus pedidos.
+                    </p>
+
+                <% } %>
             </div>
 
-            <!-- Pesquisa por e-mail -->
-            <form
-                action="/solicitacoes/buscar"
-                method="POST"
-                class="search-box flex-grow-1 mb-4"
-            >
-                <div class="input-group input-group-lg">
+            <% if (usuarioLogado) { %>
 
-                    <span class="input-group-text" aria-hidden="true">
-                        <i class="bi bi-person-search"></i>
-                    </span>
-
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        class="form-control"
-                        placeholder="Digite seu e-mail..."
-                        value="<%= email %>"
-                        required
-                    />
-
-                    <button type="submit" class="btn btn-primary-custom">
-                        Consultar
-                    </button>
-
+                <!-- Conta conectada -->
+                <div class="alert alert-info mb-4" role="status">
+                    <i class="bi bi-person-check me-2" aria-hidden="true"></i>
+                    Você está consultando as solicitações de
+                    <strong><%= usuarioLogado.nome %></strong>.
                 </div>
-            </form>
+
+            <% } else { %>
+
+                <!-- Pesquisa por e-mail -->
+                <form
+                    action="/solicitacoes/buscar"
+                    method="POST"
+                    class="search-box flex-grow-1 mb-4"
+                >
+                    <div class="input-group input-group-lg">
+
+                        <span class="input-group-text" aria-hidden="true">
+                            <i class="bi bi-person-search"></i>
+                        </span>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-control"
+                            placeholder="Digite seu e-mail..."
+                            value="<%= email %>"
+                            required
+                        />
+
+                        <button type="submit" class="btn btn-primary-custom">
+                            Consultar
+                        </button>
+
+                    </div>
+                </form>
+
+            <% } %>
 
             <!-- Lista de solicitações -->
             <div
@@ -214,7 +237,11 @@
                             </h2>
 
                             <p class="text-secondary mb-0">
-                                Confira o e-mail informado e tente novamente.
+                                <% if (usuarioLogado) { %>
+                                    Sua conta ainda não possui solicitações.
+                                <% } else { %>
+                                    Confira o e-mail informado e tente novamente.
+                                <% } %>
                             </p>
 
                         </div>

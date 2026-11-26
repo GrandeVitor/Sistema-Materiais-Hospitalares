@@ -5,46 +5,78 @@ import Material from '../models/Material.js';
 
 const router = express.Router();
 
-// Exibir página de solicitações
-router.get('/', (req, res) => {
-    res.render('solicitacoes', {
-        solicitacoes: [],
-        email: '',
-        pesquisou: false
+// Buscar solicitações pelo e-mail
+async function buscarSolicitacoes(email) {
+    const resultados = await Solicitacao.find({
+        email: { $regex: `^${email}$`, $options: 'i' }
     });
-});
 
-// Consultar solicitações pelo e-mail
-router.post('/buscar', async (req, res) => {
+    return await Promise.all(
+        resultados.map(async (solicitacao) => {
+            const material = await Material.findOne({
+                nome: solicitacao.nomeMaterial
+            });
+
+            return {
+                ...solicitacao.toObject(),
+                material: solicitacao.nomeMaterial,
+                imagem: material?.imagem
+                    ? material.imagem.startsWith('/')
+                        ? material.imagem
+                        : `/${material.imagem}`
+                    : '/imagens/padrao.png'
+            };
+        })
+    );
+}
+
+// Exibir página de solicitações
+router.get('/', async (req, res) => {
     try {
-        const email = req.body.email.trim();
+        // Se estiver logado, consultar automaticamente pelo e-mail da conta
+        if (req.session.usuario?.email) {
+            const email = req.session.usuario.email;
+            const solicitacoes = await buscarSolicitacoes(email);
 
-        const resultados = await Solicitacao.find({
-            email: { $regex: `^${email}$`, $options: 'i' }
+            return res.render('solicitacoes', {
+                solicitacoes,
+                email,
+                pesquisou: true,
+                usuarioLogado: req.session.usuario
+            });
+        }
+
+        // Se não estiver logado, exibir consulta manual
+        res.render('solicitacoes', {
+            solicitacoes: [],
+            email: '',
+            pesquisou: false,
+            usuarioLogado: false
         });
 
-        const solicitacoes = await Promise.all(
-            resultados.map(async (solicitacao) => {
-                const material = await Material.findOne({
-                    nome: solicitacao.nomeMaterial
-                });
+    } catch (erro) {
+        console.error('Erro ao carregar solicitações:', erro);
+        res.status(500).send('Erro ao carregar solicitações.');
+    }
+});
 
-                return {
-                    ...solicitacao.toObject(),
-                    material: solicitacao.nomeMaterial,
-                    imagem: material?.imagem
-    ? material.imagem.startsWith('/')
-        ? material.imagem
-        : `/${material.imagem}`
-    : '/imagens/padrao.png'
-                };
-            })
-        );
+// Consultar solicitações pelo e-mail (para quem não está logado)
+router.post('/buscar', async (req, res) => {
+    try {
+        // Se estiver logado, usar o e-mail da sessão
+        const email = req.session.usuario?.email || req.body.email?.trim();
+
+        if (!email) {
+            return res.status(400).send('Informe um e-mail para consultar.');
+        }
+
+        const solicitacoes = await buscarSolicitacoes(email);
 
         res.render('solicitacoes', {
             solicitacoes,
             email,
-            pesquisou: true
+            pesquisou: true,
+            usuarioLogado: req.session.usuario || false
         });
 
     } catch (erro) {

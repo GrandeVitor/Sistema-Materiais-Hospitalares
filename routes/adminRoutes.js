@@ -380,7 +380,7 @@ router.get('/usuarios/editar/:id', async (req, res) => {
 // Salvar alterações do usuário
 router.post('/usuarios/editar/:id', async (req, res) => {
     try {
-        const { nome, senha, tipo } = req.body;
+        const { nome, senha} = req.body;
 
         const usuario = await Usuario.findById(req.params.id);
 
@@ -403,7 +403,6 @@ router.post('/usuarios/editar/:id', async (req, res) => {
         }
 
         usuario.nome = nome.trim();
-        usuario.tipo = tipo;
 
         // Só altera a senha se o campo não estiver vazio
         if (senha && senha.trim()) {

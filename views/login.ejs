@@ -26,7 +26,7 @@
                     </div>
 
                     <div class="card border-0 shadow-sm p-4">
-                        <form action="/usuarios/login" method="POST">
+                        <form id="formLogin" action="/usuarios/login" method="POST">
 
                             <div class="mb-3">
                                 <label for="nome" class="form-label">
@@ -81,5 +81,31 @@
             </div>
         </div>
     </main>
+    <script>
+    const formLogin = document.getElementById('formLogin');
+
+    formLogin.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        try {
+            const resposta = await fetch(formLogin.action, {
+                method: 'POST',
+                body: new URLSearchParams(new FormData(formLogin))
+            });
+
+            const resultado = await resposta.json();
+
+            if (!resultado.sucesso) {
+                alert(resultado.mensagem);
+                return;
+            }
+
+            window.location.href = resultado.redirecionar;
+
+        } catch (erro) {
+            alert('Não foi possível realizar o login.');
+        }
+    });
+</script>
 </body>
 </html>

@@ -33,13 +33,16 @@
 
                     <div class="mb-3">
                         <label class="form-label">Telefone</label>
-                        <input
-                            type="text"
-                            name="telefone"
-                            class="form-control"
-                            value="<%= solicitacao.telefone %>"
-                            required
-                        >
+                            <input
+                                type="text"
+                                id="telefone"
+                                name="telefone"
+                                class="form-control"
+                                value="<%= solicitacao.telefone %>"
+                                placeholder="(00) 00000-0000"
+                                maxlength="15"
+                                required
+                            >
                     </div>
 
                     <div class="mb-3">
@@ -125,6 +128,52 @@
             </div>
         </div>
     </div>
+
+
+<script>
+    const campoTelefone = document.getElementById('telefone');
+
+    function formatarTelefone(valor) {
+        const numeros = valor.replace(/\D/g, '').slice(0, 11);
+
+        if (numeros.length === 0) {
+            return '';
+        }
+
+        if (numeros.length <= 2) {
+            return '(' + numeros;
+        }
+
+        if (numeros.length <= 6) {
+            return '(' + numeros.slice(0, 2) + ') ' + numeros.slice(2);
+        }
+
+        if (numeros.length <= 10) {
+            return '(' + numeros.slice(0, 2) + ') ' +
+                numeros.slice(2, 6) + '-' +
+                numeros.slice(6);
+        }
+
+        return '(' + numeros.slice(0, 2) + ') ' +
+            numeros.slice(2, 7) + '-' +
+            numeros.slice(7);
+    }
+
+    campoTelefone.addEventListener('input', function () {
+        const numeros = this.value.replace(/\D/g, '');
+
+        // Se todos os números foram apagados, deixa o campo vazio
+        if (numeros.length === 0) {
+            this.value = '';
+            return;
+        }
+
+        this.value = formatarTelefone(numeros);
+    });
+
+    // Formata o telefone que já está salvo no banco
+    campoTelefone.value = formatarTelefone(campoTelefone.value);
+</script>
 
 </body>
 </html>
