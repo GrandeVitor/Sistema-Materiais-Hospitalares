@@ -13,7 +13,7 @@ function renderizar(lista) {
           <div class="feature-icon mx-auto mb-3"><i class="bi bi-search" aria-hidden="true"></i></div>
           <h2 class="h5 fw-bold">Nenhum material encontrado</h2>
           <p class="text-secondary mb-0">Tente buscar por outro nome ou confira novamente o catálogo.</p>
-        </div>
+        </div> 
       </div>`;
     return;
   }

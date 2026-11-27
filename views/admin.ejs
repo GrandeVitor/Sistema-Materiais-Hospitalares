@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="pt-BR">
 
@@ -340,31 +341,27 @@
                             </div>
 
                             <!-- Pesquisa de solicitações -->
-                            <form action="/admin" method="GET" class="mb-4">
-                                <div class="input-group">
-                                    <input
-                                        type="text"
-                                        name="buscaSolicitacao"
-                                        class="form-control"
-                                        placeholder="Pesquisar por usuário, e-mail ou material..."
-                                        value="<%= buscaSolicitacao || '' %>"
-                                    >
-
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-search me-1"></i>
-                                        Pesquisar
-                                    </button>
-
-                                    <a href="/admin" class="btn btn-secondary">
-                                        Limpar
-                                    </a>
-                                </div>
+                            <form
+                                action="/admin"
+                                method="GET"
+                                class="mb-4 pesquisa-admin"
+                                data-resultados="listaTodasSolicitacoes"
+                                data-item=".item-pesquisa-admin"
+                            >
+                                <input
+                                    type="text"
+                                    name="buscaSolicitacao"
+                                    class="form-control"
+                                    placeholder="Pesquisar por usuário, e-mail ou material..."
+                                    value="<%= buscaSolicitacao || '' %>"
+                                    autocomplete="off"
+                                >
                             </form>
 
-                            <div class="d-grid gap-3">
+                            <div id="listaTodasSolicitacoes" class="d-grid gap-3">
 
                                 <% todasSolicitacoes.forEach(solicitacao => { %>
-                                    <div class="material-card">
+                                    <div class="material-card item-pesquisa-admin">
 
                                         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                                             <div>
@@ -401,7 +398,7 @@
                                         <div class="d-flex gap-2 flex-wrap">
                                             <a
                                                 href="/admin/solicitacoes/editar/<%= solicitacao._id %>"
-                                                class="btn btn-primary"
+                                                class="btn btn-primary-custom"
                                             >
                                                 <i class="bi bi-pencil-square me-1"></i>
                                                 Editar
@@ -413,7 +410,7 @@
                                                     method="POST"
                                                     onsubmit="return confirm('Tem certeza que deseja excluir esta solicitação?');"
                                                 >
-                                                    <button type="submit" class="btn btn-danger">
+                                                    <button type="submit" class="btn btn-danger-custom">
                                                         <i class="bi bi-trash me-1"></i>
                                                         Excluir
                                                     </button>
@@ -512,31 +509,27 @@
                             </div>
 
                             <!-- Pesquisa de empréstimos -->
-                            <form action="/admin" method="GET" class="mb-4">
-                                <div class="input-group">
-                                    <input
-                                        type="text"
-                                        name="buscaEmprestimo"
-                                        class="form-control"
-                                        placeholder="Pesquisar por usuário ou material..."
-                                        value="<%= buscaEmprestimo || '' %>"
-                                    >
-
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-search me-1"></i>
-                                        Pesquisar
-                                    </button>
-
-                                    <a href="/admin" class="btn btn-secondary">
-                                        Limpar
-                                    </a>
-                                </div>
+                            <form
+                                action="/admin"
+                                method="GET"
+                                class="mb-4 pesquisa-admin"
+                                data-resultados="listaTodosEmprestimos"
+                                data-item=".item-pesquisa-admin"
+                            >
+                                <input
+                                    type="text"
+                                    name="buscaEmprestimo"
+                                    class="form-control"
+                                    placeholder="Pesquisar por usuário ou material..."
+                                    value="<%= buscaEmprestimo || '' %>"
+                                    autocomplete="off"
+                                >
                             </form>
 
-                            <div class="d-grid gap-3">
+                            <div id="listaTodosEmprestimos" class="d-grid gap-3">
 
                                 <% todosEmprestimos.forEach(emprestimo => { %>
-                                    <div class="material-card">
+                                    <div class="material-card item-pesquisa-admin">
 
                                         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                                             <div>
@@ -569,7 +562,7 @@
                                         <div class="d-flex gap-2 flex-wrap">
                                             <a
                                                 href="/admin/emprestimos/editar/<%= emprestimo._id %>"
-                                                class="btn btn-primary"
+                                                class="btn btn-primary-custom"
                                             >
                                                 <i class="bi bi-pencil-square me-1"></i>
                                                 Editar
@@ -581,7 +574,7 @@
                                                     method="POST"
                                                     onsubmit="return confirm('Tem certeza que deseja excluir este empréstimo devolvido?');"
                                                 >
-                                                    <button type="submit" class="btn btn-danger">
+                                                    <button type="submit" class="btn btn-danger-custom">
                                                         <i class="bi bi-trash me-1"></i>
                                                         Excluir
                                                     </button>
@@ -668,7 +661,7 @@
 
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary-custom">
                                     <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
                                     Cadastrar material
                                 </button>
@@ -689,32 +682,28 @@
                             </div>
 
                             <!-- Pesquisa de materiais -->
-                            <form action="/admin" method="GET" class="mb-4">
-                                <div class="input-group">
-                                    <input
-                                        type="text"
-                                        name="busca"
-                                        class="form-control"
-                                        placeholder="Pesquisar material pelo nome..."
-                                        value="<%= busca || '' %>"
-                                    >
-
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-search me-1"></i>
-                                        Pesquisar
-                                    </button>
-
-                                    <a href="/admin" class="btn btn-secondary">
-                                        Limpar
-                                    </a>
-                                </div>
+                            <form
+                                action="/admin"
+                                method="GET"
+                                class="mb-4 pesquisa-admin"
+                                data-resultados="listaMateriais"
+                                data-item=".item-pesquisa-admin"
+                            >
+                                <input
+                                    type="text"
+                                    name="busca"
+                                    class="form-control"
+                                    placeholder="Pesquisar material pelo nome..."
+                                    value="<%= busca || '' %>"
+                                    autocomplete="off"
+                                >
                             </form>
 
-                            <div class="d-grid gap-3">
+                            <div id="listaMateriais" class="d-grid gap-3">
 
                                 <% materiais.forEach(material => { %>
 
-                                    <div class="material-card">
+                                    <div class="material-card item-pesquisa-admin">
                                         <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
 
                                             <!-- Imagem do material -->
@@ -745,7 +734,7 @@
                                             </div>
 
                                             <div class="d-flex gap-2">
-                                                <a href="/materiais/editar/<%= material._id %>" class="btn btn-primary">
+                                                <a href="/materiais/editar/<%= material._id %>" class="btn btn-primary-custom">
                                                     <i class="bi bi-pencil-square me-1"></i>
                                                     Editar
                                                 </a>
@@ -755,7 +744,7 @@
                                                     method="POST"
                                                     onsubmit="return confirm('Tem certeza que deseja excluir este material?');"
                                                 >
-                                                    <button type="submit" class="btn btn-danger">
+                                                    <button type="submit" class="btn btn-danger-custom">
                                                         <i class="bi bi-trash me-1"></i>
                                                         Excluir
                                                     </button>
@@ -860,7 +849,7 @@
                                         </div>
 
                                         <div class="col-12">
-                                            <button type="submit" class="btn btn-success">
+                                            <button type="submit" class="btn btn-primary-custom">
                                                 <i class="bi bi-plus-lg me-2"></i>
                                                 Cadastrar doação
                                             </button>
@@ -880,7 +869,13 @@
                                     Pesquisar doações
                                 </h3>
 
-                                <form action="/admin" method="GET">
+                                <form
+                                    action="/admin"
+                                    method="GET"
+                                    class="pesquisa-admin"
+                                    data-resultados="listaDoacoes"
+                                    data-item=".item-pesquisa-admin"
+                                >
 
                                     <input
                                         type="hidden"
@@ -888,26 +883,14 @@
                                         value="doacoes"
                                     >
 
-                                    <div class="input-group">
-
-                                        <input
-                                            type="text"
-                                            name="buscaDoacao"
-                                            class="form-control"
-                                            placeholder="Pesquisar por doador ou material..."
-                                            value="<%= buscaDoacao || '' %>"
-                                        >
-
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="bi bi-search me-1"></i>
-                                            Pesquisar
-                                        </button>
-
-                                        <a href="/admin?aba=doacoes" class="btn btn-secondary">
-                                            Limpar
-                                        </a>
-
-                                    </div>
+                                    <input
+                                        type="text"
+                                        name="buscaDoacao"
+                                        class="form-control"
+                                        placeholder="Pesquisar por doador ou material..."
+                                        value="<%= buscaDoacao || '' %>"
+                                        autocomplete="off"
+                                    >
 
                                 </form>
 
@@ -920,13 +903,13 @@
                                     Doações cadastradas
                                 </h3>
 
-                                <% if (doacoes && doacoes.length > 0) { %>
+                                <div id="listaDoacoes" class="d-grid gap-3">
 
-                                    <div class="d-grid gap-3">
+                                    <% if (doacoes && doacoes.length > 0) { %>
 
                                         <% doacoes.forEach(doacao => { %>
 
-                                            <div class="border rounded-3 p-3">
+                                            <div class="border rounded-3 p-3 item-pesquisa-admin">
 
                                                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
 
@@ -962,7 +945,7 @@
 
                                                         <a
                                                             href="/admin/doacoes/editar/<%= doacao._id %>"
-                                                            class="btn btn-primary btn-sm"
+                                                            class="btn btn-primary-custom btn-sm"
                                                         >
                                                             <i class="bi bi-pencil-square me-1"></i>
                                                             Editar
@@ -973,7 +956,7 @@
                                                             method="POST"
                                                             onsubmit="return confirm('Deseja realmente excluir esta doação?');"
                                                         >
-                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                            <button type="submit" class="btn btn-danger-custom btn-sm">
                                                                 <i class="bi bi-trash me-1"></i>
                                                                 Excluir
                                                             </button>
@@ -987,15 +970,15 @@
 
                                         <% }) %>
 
-                                    </div>
+                                    <% } else { %>
 
-                                <% } else { %>
+                                        <div class="empty-state p-4 text-center">
+                                            Nenhuma doação encontrada.
+                                        </div>
 
-                                    <div class="empty-state p-4 text-center">
-                                        Nenhuma doação encontrada.
-                                    </div>
+                                    <% } %>
 
-                                <% } %>
+                                </div>
 
                             </div>
 
@@ -1014,31 +997,27 @@
                             </div>
 
                             <!-- Pesquisa de usuários -->
-                            <form action="/admin" method="GET" class="mb-4">
-                                <div class="input-group">
-                                    <input
-                                        type="text"
-                                        name="buscaUsuario"
-                                        class="form-control"
-                                        placeholder="Pesquisar usuário pelo nome..."
-                                        value="<%= buscaUsuario || '' %>"
-                                    >
-
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-search me-1"></i>
-                                        Pesquisar
-                                    </button>
-
-                                    <a href="/admin" class="btn btn-secondary">
-                                        Limpar
-                                    </a>
-                                </div>
+                            <form
+                                action="/admin"
+                                method="GET"
+                                class="mb-4 pesquisa-admin"
+                                data-resultados="listaUsuarios"
+                                data-item=".item-pesquisa-admin"
+                            >
+                                <input
+                                    type="text"
+                                    name="buscaUsuario"
+                                    class="form-control"
+                                    placeholder="Pesquisar usuário pelo nome..."
+                                    value="<%= buscaUsuario || '' %>"
+                                    autocomplete="off"
+                                >
                             </form>
 
-                            <div class="d-grid gap-3">
+                            <div id="listaUsuarios" class="d-grid gap-3">
 
                                 <% usuarios.forEach(usuario => { %>
-                                    <div class="material-card">
+                                    <div class="material-card item-pesquisa-admin">
 
                                         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
 
@@ -1047,7 +1026,7 @@
                                             </div>
 
                                             <div class="d-flex gap-2">
-                                                <a href="/admin/usuarios/editar/<%= usuario._id %>" class="btn btn-primary">
+                                                <a href="/admin/usuarios/editar/<%= usuario._id %>" class="btn btn-primary-custom">
                                                     <i class="bi bi-pencil-square me-1"></i>
                                                     Editar
                                                 </a>
@@ -1057,7 +1036,7 @@
                                                     method="POST"
                                                     onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');"
                                                 >
-                                                    <button type="submit" class="btn btn-danger">
+                                                    <button type="submit" class="btn btn-danger-custom">
                                                         <i class="bi bi-trash me-1"></i>
                                                         Excluir
                                                     </button>

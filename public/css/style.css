@@ -495,3 +495,37 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
+
+/* Botão excluir na área administrativa */
+.btn-danger-custom {
+  background: #dc3545;
+  border: 1px solid #dc3545;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 0.75rem;
+}
+
+.btn-danger-custom:hover,
+.btn-danger-custom:focus {
+  background: #bb2d3b;
+  border-color: #bb2d3b;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* Botão limpar na área administrativa */
+.btn-secondary-custom {
+  background: #e6f5f7;
+  border: 1px solid #8db5c7;
+  color: var(--azul-escuro);
+  font-weight: 700;
+  border-radius: 0.75rem;
+}
+
+.btn-secondary-custom:hover,
+.btn-secondary-custom:focus {
+  background: #d2edf1;
+  border-color: var(--azul-escuro);
+  color: var(--azul-escuro);
+  transform: translateY(-1px);
+}
